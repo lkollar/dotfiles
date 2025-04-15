@@ -1,0 +1,27 @@
+.DS_Store
+*.log*
+*.pyc
+test-reports/
+.cache/
+.coverage
+.idea/
+.vscode/
+dpkg_build/
+dist/
+*.egg-info/
+pip-wheel-metadata/
+
+# pytest results
+.cache/
+.coverage
+test-reports/
+# python byte code
+*.pyc
+
+# vim swap files
+*.swp
+
+.mypy_cache
+.nox
+
+.venv

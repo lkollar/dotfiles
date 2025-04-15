@@ -1,0 +1,70 @@
+[core]
+    autocrlf = input
+    excludesfile = ~/.gitignore
+[color]
+    ui = true
+[commit]
+    verbose = true
+[init]
+    defaultBranch = main
+[alias]
+    # one-line log
+    l = log --pretty=format:"%C(yellow)%h\\ %ad%Cred%d\\ %Creset%s%Cblue\\ [%cn]" --decorate --date=short
+
+    a = add
+    ap = add -p
+    c = commit --verbose
+    ca = commit -a --verbose
+    cm = commit -m
+    cam = commit -a -m
+    m = commit --amend --verbose
+
+    d = diff
+    ds = diff --stat
+    dc = diff --cached
+
+    s = status -s
+    co = checkout
+    cob = checkout -b
+    # list branches sorted by last modified
+    b = "!git for-each-ref --sort='-authordate' --format='%(authordate)%09%(objectname:short)%09%(refname)' refs/heads | sed -e 's-refs/heads/--'"
+
+    undo-commit = reset --soft HEAD~1
+    pom = pull origin master
+    # list aliases
+    la = "!git config -l | grep alias | cut -c 7-"
+
+    lg1 = log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(bold yellow)%d%C(reset)' --all
+    lg2 = log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset)%C(bold yellow)%d%C(reset)%n''          %C(white)%s%C(reset) %C(dim white)- %an%C(reset)' --all
+    lg = !"git lg1"
+    cleanup = "!f(){ git checkout -q master && git for-each-ref refs/heads/ '--format=%(refname:short)' | while read branch; do mergeBase=$(git merge-base master $branch) && [[ $(git cherry master $(git commit-tree $(git rev-parse $branch^{tree}) -p $mergeBase -m _)) == '-'* ]] && git branch -D $branch; done ; }; f"
+    fixup-branch = "!git rebase -i $(git rev-list master..HEAD | tail -n 1)^ --autosquash"
+
+[color "diff-highlight"]
+    oldNormal = red bold
+    oldHighlight = red bold 52
+    newNormal = green bold
+    newHighlight = green bold 22
+
+[url "git://github.com/"]
+    insteadOf = gh://
+
+[include]
+    path = ~/.gitconfig.local
+
+[include]
+    path = ~/.gitconfig.os
+
+[pull]
+    rebase = true
+
+[init]
+    defaultBranch = main
+
+# Hack to use personal account for YADM config
+[includeIf "gitdir:~/.config/yadm/repo.git"]
+    path = "~/.gitconfig.local##u.lkollar"
+
+[includeIf "gitdir:~/github/"]
+    path = "~/.gitconfig.local##u.lkollar"
+
