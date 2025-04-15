@@ -1,1 +1,0 @@
-.gitconfig.os##o.Darwin
