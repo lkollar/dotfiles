@@ -1,0 +1,15 @@
+set editing-mode vi
+#set keymap vi
+set keymap vi-insert
+set convert-meta on
+set show-mode-in-prompt on
+
+# https://stackoverflow.com/a/42107711
+set vi-ins-mode-string \1\e[0 q\2
+set vi-cmd-mode-string \1\e[0 q\2
+
+# these are for vi-command mode
+"\e[A": history-search-backward            # arrow up
+"\e[B": history-search-forward             # arrow down
+"\ep": yank-last-arg                       # bind to Alt-p
+control-l: clear-screen
