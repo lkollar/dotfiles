@@ -1,0 +1,23 @@
+#!/bin/bash
+
+# vi: ft=sh
+if [ -f /etc/debian_version ]; then
+    echo "Detected debian-based distro";
+
+    sudo apt update && sudo apt install -y \
+        tmux \
+        neovim \
+        zsh \
+        pipx \
+        luarocks \
+
+    pipx install pew
+
+    echo "Changing shell to ZSH"
+    chsh -s /usr/bin/zsh
+fi
+
+curl -sS https://starship.rs/install.sh | sh
+
+vim +PlugInstall +qall
+[[ ! -e ~/.tmux/plugins/tpm ]] && git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
