@@ -1,0 +1,75 @@
+#!/usr/bin/env bash
+
+# A fork of https://github.com/twolfson/sexy-bash-prompt
+# This uses git's own __git_ps1 and displays only the
+# branch name to reduce the delay when displaying the prompt.
+
+# Copy this from the version shipped with git
+source ~/.git-prompt.sh
+
+# If we are on a colored terminal
+if tput setaf 1 &> /dev/null; then
+  # Reset the shell from our `if` check
+  tput sgr0 &> /dev/null
+
+  # If you would like to customize your colors, use
+  # # Attribution: http://linuxtidbits.wordpress.com/2008/08/11/output-color-on-bash-scripts/
+  # for i in $(seq 0 $(tput colors)); do
+  #   echo " $(tput setaf $i)Text$(tput sgr0) $(tput bold)$(tput setaf $i)Text$(tput sgr0) $(tput sgr 0 1)$(tput setaf $i)Text$(tput sgr0)  \$(tput setaf $i)"
+  # done
+
+  # Save common color actions
+  bold="$(tput bold)"
+  reset="$(tput sgr0)"
+
+  # If the terminal supports at least 256 colors, write out our 256 color based set
+  if [[ "$(tput colors)" -ge 256 ]] &> /dev/null; then
+    user_color="$bold$(tput setaf 27)" # BOLD BLUE
+    preposition_color="$bold$(tput setaf 7)" # BOLD WHITE
+    device_color="$bold$(tput setaf 39)" # BOLD CYAN
+    dir_color="$bold$(tput setaf 76)" # BOLD GREEN
+    venv_color="$bold$(tput setaf 154)" # BOLD YELLOW
+    git_progress_color="$bold$(tput setaf 9)" # BOLD RED
+  else
+  # Otherwise, use colors from our set of 8
+    user_color="$bold$(tput setaf 4)" # BOLD BLUE
+    preposition_color="$bold$(tput setaf 7)" # BOLD WHITE
+    device_color="$bold$(tput setaf 6)" # BOLD CYAN
+    dir_color="$bold$(tput setaf 2)" # BOLD GREEN
+    venv_color="$bold$(tput setaf 3)" # BOLD YELLOW
+    git_progress_color="$bold$(tput setaf 1)" # BOLD RED
+  fi
+
+  symbol_color="$bold" # BOLD
+
+else
+# Otherwise, use ANSI escape sequences for coloring
+  # If you would like to customize your colors, use
+  # DEV: 30-39 lines up 0-9 from `tput`
+  # for i in $(seq 0 109); do
+  #   echo -n -e "\033[1;${i}mText$(tput sgr0) "
+  #   echo "\033[1;${i}m"
+  # done
+
+  reset="\033[m"
+  user_color="\033[1;34m" # BLUE
+  preposition_color="\033[1;37m" # WHITE
+  device_color="\033[1;36m" # CYAN
+  dir_color="\033[1;32m" # GREEN
+  venv_color="\033[1;33m" # YELLOW
+  git_progress_color="\033[1;31m" # RED
+  symbol_color="" # NORMAL
+fi
+
+set_active_venv() {
+    export ACTIVE_VENV=""
+    if [ -n "$VIRTUAL_ENV" ]; then
+        ACTIVE_VENV="$venv_color(${VIRTUAL_ENV##*/})$reset "
+        export ACTIVE_VENV
+    fi
+}
+
+export GIT_PS1_SHOWCOLORHINTS=1
+export GIT_PS1_SHOWDIRTYSTATE=1
+export GIT_PS1_SHOWSTASHSTATE=1
+PROMPT_COMMAND='set_active_venv; __git_ps1 "${ACTIVE_VENV}$user_color\u$reset$preposition_color at $reset$device_color\h$reset $dir_color\w$reset" "\n\\\$ "'

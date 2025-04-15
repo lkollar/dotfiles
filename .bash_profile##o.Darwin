@@ -1,0 +1,3 @@
+# Needed on macOS to load .bashrc on shell login
+# https://scriptingosx.com/2017/04/about-bash_profile-and-bashrc-on-macos/
+[ -r ~/.bashrc ] && . ~/.bashrc
