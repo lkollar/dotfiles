@@ -1,0 +1,89 @@
+# Catppuccin Mocha theme for GNU ls utility
+# Palette: https://github.com/catppuccin/catppuccin
+
+# Special files
+NORMAL 00;38;5;245 # text (surface2)
+RESET 0
+DIR 00;38;5;110 # directory (blue)
+LINK 00;38;5;168 # symbolic link (pink)
+MULTIHARDLINK 00;38;5;245 # text (surface2)
+FIFO 48;5;229;38;5;179 # pipe (yellow + peach)
+SOCK 48;5;229;38;5;179 # socket (yellow + peach)
+DOOR 48;5;229;38;5;179 # door (yellow + peach)
+BLK 48;5;229;38;5;245 # block device (yellow + surface2)
+CHR 48;5;229;38;5;245 # character device (yellow + surface2)
+ORPHAN 48;5;88;38;5;168 # orphan link (red + pink)
+SETUID 48;5;168;38;5;229 # setuid file (pink + yellow)
+SETGID 48;5;179;38;5;229 # setgid file (peach + yellow)
+CAPABILITY 30;41 # file with capability (red background)
+STICKY_OTHER_WRITABLE 48;5;110;38;5;229 # sticky and other-writable
+OTHER_WRITABLE 48;5;88;38;5;110 # other-writable (red + blue)
+STICKY 48;5;110;38;5;229 # sticky (blue + yellow)
+EXEC 00;38;5;142 # executable (green)
+
+# Archives or compressed files
+.tar    00;38;5;168
+.tgz    00;38;5;168
+.arj    00;38;5;168
+.taz    00;38;5;168
+.lzh    00;38;5;168
+.lzma   00;38;5;168
+.tlz    00;38;5;168
+.txz    00;38;5;168
+.zip    00;38;5;168
+.z      00;38;5;168
+.Z      00;38;5;168
+.dz     00;38;5;168
+.gz     00;38;5;168
+.lz     00;38;5;168
+.xz     00;38;5;168
+.bz2    00;38;5;168
+.bz     00;38;5;168
+.tbz    00;38;5;168
+.tbz2   00;38;5;168
+.tz     00;38;5;168
+.deb    00;38;5;168
+.rpm    00;38;5;168
+.jar    00;38;5;168
+.rar    00;38;5;168
+.ace    00;38;5;168
+.zoo    00;38;5;168
+.cpio   00;38;5;168
+.7z     00;38;5;168
+.rz     00;38;5;168
+.apk    00;38;5;168
+.gem    00;38;5;168
+
+# Image formats
+.jpg    00;38;5;179
+.JPG    00;38;5;179
+.jpeg   00;38;5;179
+.gif    00;38;5;179
+.bmp    00;38;5;179
+.pbm    00;38;5;179
+.pgm    00;38;5;179
+.ppm    00;38;5;179
+.tga    00;38;5;179
+.xbm    00;38;5;179
+.xpm    00;38;5;179
+.tif    00;38;5;179
+.tiff   00;38;5;179
+.png    00;38;5;179
+.PNG    00;38;5;179
+.svg    00;38;5;179
+.svgz   00;38;5;179
+.mng    00;38;5;179
+.pcx    00;38;5;179
+.dl     00;38;5;179
+.xcf    00;38;5;179
+.xwd    00;38;5;179
+.yuv    00;38;5;179
+.cgm    00;38;5;179
+.emf    00;38;5;179
+.eps    00;38;5;179
+.CR2    00;38;5;179
+.ico    00;38;5;179
+
+# Files of special interest
+.tex             00;38;5;245
+.rdf             00
