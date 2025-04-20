@@ -10,7 +10,7 @@ zle -N edit-command-line
 bindkey -M vicmd v edit-command-line
 
 # Use NeoVim as 'vim' if available
-if [ $(command -v nvim) ]; then
+if [[ $(command -v nvim) ]]; then
     alias vim=nvim
 fi
 
@@ -75,18 +75,17 @@ export LESS_TERMCAP_se=$'\e[0m'        # reset reverse video
 export LESS_TERMCAP_ue=$'\e[0m'        # reset underline
 export GROFF_NO_SGR=1                  # for konsole and gnome-terminal
 
-if command -v nvim >/dev/null 2>&1; then
+if [[ -x $(command -v nvim >/dev/null 2>&1) ]]; then
     export EDITOR=nvim
 else
     export EDITOR=vim
 fi
 
 OS=$(uname -s)
-USER=$(whoami)
 
 if [[ $OS = "Darwin" ]]
 then
-    if [ -n $(command -v brew) ]; then
+    if [[ -n "$(command -v brew)" ]]; then
         export BREW_PREFIX=/opt/homebrew
 
         export PATH="$BREW_PREFIX/bin:$BREW_PREFIX/sbin:/opt/local/bin:$PATH"
@@ -107,9 +106,7 @@ elif [[ $OS = "Linux" && -e ~/.ssh/id_rsa.pub ]]; then
 fi
 
 # WSL
-grep microsoft /proc/version >/dev/null 2>&1
-if [[ $? -eq 0 ]]
-then
+if [[ "$(cat /proc/version)" == *"microsoft"* ]]; then
     set_display() {
         export DISPLAY=`grep -oP "(?<=nameserver ).+" /etc/resolv.conf`:0.0
     }
@@ -157,14 +154,13 @@ for dump in ~/.zcompdump(N.mh+24); do
     if type brew &>/dev/null; then
         FPATH=$(brew --prefix)/share/zsh-completions:$FPATH
     fi
-    compinit
 done
-
 
 if [[ -e ~/.docker/completions ]]; then
     fpath=(~/.docker/completions $fpath)
-    compinit
 fi
+
+compinit
 
 eval "$(starship init zsh)"
 source "$(pew shell_config)"
