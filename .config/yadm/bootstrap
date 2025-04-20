@@ -38,9 +38,12 @@ if [ -f /etc/arch-release ]; then
     sudo pacman -Syu --noconfirm \
         autoconf \
         automake \
+        fzf \
         gcc \
         keychain \
         luarocks \
+        man-db \
+        man-pages \
         neovim \
         nodejs \
         npm \
