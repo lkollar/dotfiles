@@ -72,7 +72,7 @@ elif [[ $OS = "Linux" && -e ~/.ssh/id_rsa.pub ]]; then
 fi
 
 # WSL
-if [[ "$(cat /proc/version)" == *"microsoft"* ]]; then
+if [ -f "/proc/version" ] && [[ "$(cat /proc/version)" == *"microsoft"* ]]; then
     set_display() {
         export DISPLAY=`grep -oP "(?<=nameserver ).+" /etc/resolv.conf`:0.0
     }
