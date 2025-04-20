@@ -7,7 +7,7 @@ export PATH=~/bin:~/.local/bin:$PATH
 export ZSH="$HOME/.oh-my-zsh"
 
 ZSH_THEME="robbyrussell"
-ZSH_COLORIZE_STYLE="zenburn"
+ZSH_COLORIZE_STYLE="catppuccin-mocha"
 
 zstyle ':omz:update' mode disabled  # disable automatic updates
 
