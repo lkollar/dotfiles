@@ -58,10 +58,18 @@ if [ -f /etc/arch-release ]; then
     ensure_zsh
 fi
 
-if ! command -v starship >/dev/null 2>&1; then
-    curl -sS https://starship.rs/install.sh | sh
+if [[ -e /home/lkollar/.oh-my-zsh ]]; then
+    echo "oh-my-zsh already installed"
 else
-    echo "starship is already installed"
+    echo "Installing oh-my-zsh"
+    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+fi
+
+if command -v pygmentize >/dev/null 2>&1; then
+    echo "Pygments already installed"
+else
+    echo "Installing Pygments"
+    pipx install pygments
 fi
 
 [[ ! -e ~/.tmux/plugins/tpm ]] && git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
