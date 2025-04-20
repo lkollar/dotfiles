@@ -161,7 +161,7 @@ for dump in ~/.zcompdump(N.mh+24); do
 done
 
 
-if [[ -e  ~/.docker/completions ]]; then
+if [[ -e ~/.docker/completions ]]; then
     fpath=(~/.docker/completions $fpath)
     compinit
 fi
