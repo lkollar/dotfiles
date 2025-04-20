@@ -22,11 +22,28 @@ if [ -f /etc/debian_version ]; then
     echo "Detected debian-based distro";
 
     sudo apt update && sudo apt install -y \
-        tmux \
-        neovim \
-        zsh \
-        pipx \
+        curl \
+        gcc \
+        fzf \
+        keychain \
         luarocks \
+        pipx \
+        ripgrep \
+        tmux \
+        zsh
+
+    if grep -q "^ID=ubuntu" /etc/os-release; then
+        sudo snap install --classic nvim docker
+        if ! command -v node; then
+            export KEEP_ZSHRC=yes
+            cd /tmp && \
+                curl -fsSL https://deb.nodesource.com/setup_23.x -o nodesource_setup.sh && \
+                sudo -E bash nodesource_setup.sh && \
+                sudo apt-get install -y nodejs
+        else
+            echo "Node.js is already installed."
+    fi
+    fi
 
     ensure_pew
     ensure_zsh
@@ -65,7 +82,7 @@ if [[ -e /home/lkollar/.oh-my-zsh ]]; then
     echo "oh-my-zsh already installed"
 else
     echo "Installing oh-my-zsh"
-    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
 fi
 
 if command -v pygmentize >/dev/null 2>&1; then
