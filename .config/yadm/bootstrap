@@ -11,13 +11,35 @@ if [ -f /etc/debian_version ]; then
         pipx \
         luarocks \
 
-    pipx install pew
+    if ! command -v pew >/dev/null 2>&1; then
+        pipx install pew
+    else
+        echo "pew is already installed"
+    fi
 
-    echo "Changing shell to ZSH"
-    chsh -s /usr/bin/zsh
+    if [[ $0 != *zsh ]]; then
+        echo "Changing shell to ZSH"
+        chsh -s /usr/bin/zsh
+    else
+        echo "Shell is already ZSH"
+    fi
 fi
 
-curl -sS https://starship.rs/install.sh | sh
+if ! command -v starship >/dev/null 2>&1; then
+    curl -sS https://starship.rs/install.sh | sh
+else
+    echo "starship is already installed"
+fi
 
-vim +PlugInstall +qall
 [[ ! -e ~/.tmux/plugins/tpm ]] && git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+
+WSLPATH=$(command -v wslpath)
+if [[ "$WSLPATH" ]]; then
+    echo "Detected WSL"
+    USERPROFILE=$($WSLPATH "$(cmd.exe /c "echo %USERPROFILE%" 2>/dev/null | tr -d '\r')")
+    if [ ! -e $USERPROFILE/.wezterm.lua ]; then
+        ln -s ~/.config/wezterm/wezterm.lua $USERPROFILE/.wezterm.lua
+    else
+        echo "wezterm.lua already exists in $USERPROFILE"
+    fi
+fi
