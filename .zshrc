@@ -159,5 +159,4 @@ fi
 
 compinit
 
-eval "$(starship init zsh)"
 source "$(pew shell_config)"
