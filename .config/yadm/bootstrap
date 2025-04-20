@@ -1,6 +1,23 @@
 #!/bin/bash
-
 # vi: ft=sh
+
+ensure_pew() {
+    if ! command -v pew >/dev/null 2>&1; then
+        pipx install pew
+    else
+        echo "pew is already installed"
+    fi
+}
+
+ensure_zsh() {
+    if [[ $SHELL != *zsh ]]; then
+        echo "Changing shell to ZSH"
+        chsh -s /usr/bin/zsh
+    else
+        echo "Shell is already ZSH"
+    fi
+}
+
 if [ -f /etc/debian_version ]; then
     echo "Detected debian-based distro";
 
@@ -11,18 +28,34 @@ if [ -f /etc/debian_version ]; then
         pipx \
         luarocks \
 
-    if ! command -v pew >/dev/null 2>&1; then
-        pipx install pew
-    else
-        echo "pew is already installed"
-    fi
+    ensure_pew
+    ensure_zsh
+fi
 
-    if [[ $0 != *zsh ]]; then
-        echo "Changing shell to ZSH"
-        chsh -s /usr/bin/zsh
-    else
-        echo "Shell is already ZSH"
-    fi
+if [ -f /etc/arch-release ]; then
+    echo "Detected arch-based distro";
+
+    sudo pacman -Syu --noconfirm \
+        autoconf \
+        automake \
+        gcc \
+        keychain \
+        luarocks \
+        neovim \
+        nodejs \
+        npm \
+        python-pipx \
+        ripgrep \
+        rustup \
+        shellcheck \
+        starship \
+        tmux \
+        unzip \
+        uv \
+        zsh \
+
+    ensure_pew
+    ensure_zsh
 fi
 
 if ! command -v starship >/dev/null 2>&1; then
@@ -37,8 +70,8 @@ WSLPATH=$(command -v wslpath)
 if [[ "$WSLPATH" ]]; then
     echo "Detected WSL"
     USERPROFILE=$($WSLPATH "$(cmd.exe /c "echo %USERPROFILE%" 2>/dev/null | tr -d '\r')")
-    if [ ! -e $USERPROFILE/.wezterm.lua ]; then
-        ln -s ~/.config/wezterm/wezterm.lua $USERPROFILE/.wezterm.lua
+    if [ ! -e "$USERPROFILE/.wezterm.lua" ]; then
+        ln -s ~/.config/wezterm/wezterm.lua "$USERPROFILE/.wezterm.lua"
     else
         echo "wezterm.lua already exists in $USERPROFILE"
     fi
