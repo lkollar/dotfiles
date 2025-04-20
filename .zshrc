@@ -102,7 +102,7 @@ then
     # Needed for gpg: https://stackoverflow.com/a/55032706
     export GPG_TTY=$(tty)
     export PYTHON_CONFIGURE_OPTS="--enable-framework"
-elif [[ $OS = "Linux" ]]; then
+elif [[ $OS = "Linux" && -e ~/.ssh/id_rsa.pub ]]; then
     [ $(command -v keychain) ] && eval `keychain -q --eval --agents ssh id_rsa`
 fi
 
@@ -141,7 +141,7 @@ if [[ -z $XDG_CONFIG_HOME ]]; then
     export XDG_CONFIG_HOME="$HOME/.config"
 fi
 
-if [[ -e /etc/wsl.conf ]]
+if [[ -e /etc/wsl.conf && -e ~/.ssh/id_rsa.pub ]]
 then
     eval $(keychain --quiet --eval --agents ssh id_rsa)
 fi
