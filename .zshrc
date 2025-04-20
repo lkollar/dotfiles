@@ -1,3 +1,4 @@
+# vi: ft=sh
 
 # Set up cdr
 # See https://man.archlinux.org/man/zshcontrib.1#REMEMBERING_RECENT_DIRECTORIES
