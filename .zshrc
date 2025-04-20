@@ -1,4 +1,7 @@
 
+# Set this before anything else to ensure all commands are available
+export PATH=~/bin:~/.local/bin:$PATH
+
 ### oh-my-zsh configuration ########################################################
 
 export ZSH="$HOME/.oh-my-zsh"
@@ -77,7 +80,6 @@ if [[ "$(cat /proc/version)" == *"microsoft"* ]]; then
     export PATH=$PATH:/snap/bin
 fi
 
-export PATH=~/bin:~/.local/bin:$PATH
 YADM_CLASS=$(yadm config local.class)
 
 if [[ "$YADM_CLASS" == "work-macos" ]]
