@@ -9,11 +9,6 @@ autoload edit-command-line
 zle -N edit-command-line
 bindkey -M vicmd v edit-command-line
 
-# Use NeoVim as 'vim' if available
-if [[ $(command -v nvim) ]]; then
-    alias vim=nvim
-fi
-
 # run-help
 autoload -Uz run-help
 (( ${+aliases[run-help]} )) && unalias run-help
@@ -75,7 +70,8 @@ export LESS_TERMCAP_se=$'\e[0m'        # reset reverse video
 export LESS_TERMCAP_ue=$'\e[0m'        # reset underline
 export GROFF_NO_SGR=1                  # for konsole and gnome-terminal
 
-if [[ -x $(command -v nvim >/dev/null 2>&1) ]]; then
+if command -v nvim >/dev/null 2>&1; then
+    alias vim=nvim
     export EDITOR=nvim
 else
     export EDITOR=vim
