@@ -4,8 +4,8 @@
 vim.g.autoformat = false
 
 --- Easier tab navigation
-vim.keymap.set('n', 'L', 'gt')
-vim.keymap.set('n', 'H', 'gT')
+vim.keymap.set('n', 'L', 'gt', {desc = 'Go to next tab'})
+vim.keymap.set('n', 'H', 'gT', {desc = 'Go to previous tab'})
 
 -- System clipboard integration
 vim.keymap.set({'n', 'x', 'o'}, 'gy', '"+y', {desc = 'Copy to clipboard'})
