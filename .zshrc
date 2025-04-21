@@ -33,6 +33,9 @@ source $ZSH/oh-my-zsh.sh
 
 export LANG=en_US.UTF-8
 
+# If the entire content fits on the screen, don't clear the screen
+export PAGER="less -F -X"
+
 # Preferred editor for local and remote sessions
 if command -v nvim >/dev/null 2>&1; then
     alias vim=nvim
