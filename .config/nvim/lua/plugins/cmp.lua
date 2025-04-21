@@ -10,9 +10,6 @@ return {
         opts.completion.menu = opts.completion.menu or {}
         opts.completion.menu.auto_show = false
 
-        -- disale ghost_text
-        opts.completion.ghost_text.enabled = true
-
         -- do not auto-accept or auto-insert suggestions
         opts.completion.list = {
             selection = { preselect = false, auto_insert = false }
