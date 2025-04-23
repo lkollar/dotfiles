@@ -68,3 +68,5 @@
 [includeIf "gitdir:~/github/"]
     path = "~/.gitconfig.local##u.lkollar"
 
+[include]
+    path = "~/.gitconfig.work"
