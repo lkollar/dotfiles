@@ -93,7 +93,10 @@ else
     pipx inject pygments catppuccin[pygments]
 fi
 
-[[ ! -e ~/.tmux/plugins/tpm ]] && git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+if [[ ! -e ~/.tmux/plugins/tpm ]]; then
+    git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+    cd ~/.tmux/plugins/tpm/scripts && ./install_plugins.sh
+fi
 
 WSLPATH=$(command -v wslpath)
 if [[ "$WSLPATH" ]]; then
