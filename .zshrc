@@ -32,6 +32,7 @@ source $ZSH/oh-my-zsh.sh
 ### User configuration ########################################################
 
 export LANG=en_US.UTF-8
+export TERM=screen-256color
 
 # If the entire content fits on the screen, don't clear the screen
 export PAGER="less -F -X"
