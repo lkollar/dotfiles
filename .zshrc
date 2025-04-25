@@ -29,6 +29,10 @@ alias cat=ccat
 
 source $ZSH/oh-my-zsh.sh
 
+# Display the user and the host name in the prompt
+autoload -U colors && colors
+PS1="%{$fg[green]%}%n%{$reset_color%}@%{$fg[cyan]%}${${(%):-%m}} %{$fg[yellow]%}%~ %{$reset_color%}%% "
+
 ### User configuration ########################################################
 
 export LANG=en_US.UTF-8
