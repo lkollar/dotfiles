@@ -8,3 +8,11 @@ vim.o.expandtab = true
 vim.o.shiftwidth = 4
 vim.o.softtabstop = 4
 vim.o.conceallevel = 0
+
+-- Open .whl files as zip
+vim.api.nvim_create_autocmd("BufReadCmd", {
+  pattern = "*.whl",
+  callback = function()
+    vim.cmd("call zip#Browse(expand('<amatch>'))")
+  end,
+})
