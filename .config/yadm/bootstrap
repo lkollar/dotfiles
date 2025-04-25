@@ -18,6 +18,12 @@ ensure_zsh() {
     fi
 }
 
+# Configure YADM user just for YADM
+# https://yadm.io/docs/faq#usage
+yadm gitconfig "user.email" kiss.kollar.laszlo@gmail.com
+yadm gitconfig "user.name" "László Kiss Kollár"
+
+
 if [ -f /etc/debian_version ]; then
     echo "Detected debian-based distro";
 

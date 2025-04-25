@@ -61,10 +61,6 @@
 [init]
     defaultBranch = main
 
-# Hack to use personal account for YADM config
-[includeIf "gitdir:~/.local/share/yadm/repo.git"]
-    path = "~/.gitconfig.local##u.lkollar"
-
 [includeIf "gitdir:~/github/"]
     path = "~/.gitconfig.local##u.lkollar"
 
