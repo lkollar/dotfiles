@@ -109,7 +109,7 @@ if [[ "$WSLPATH" ]]; then
     echo "Detected WSL"
     USERPROFILE=$($WSLPATH "$(cmd.exe /c "echo %USERPROFILE%" 2>/dev/null | tr -d '\r')")
     if [ ! -e "$USERPROFILE/.wezterm.lua" ]; then
-        ln -s ~/.config/wezterm/wezterm.lua "$USERPROFILE/.wezterm.lua"
+        cp ~/.config/wezterm/wezterm.lua "$USERPROFILE/.wezterm.lua"
     else
         echo "wezterm.lua already exists in $USERPROFILE"
     fi
