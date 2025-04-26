@@ -23,9 +23,6 @@ plugins=(
   vi-mode
 )
 
-# Alias less and cat to colorized versions
-alias less=cless
-alias cat=ccat
 
 source $ZSH/oh-my-zsh.sh
 
