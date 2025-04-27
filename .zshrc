@@ -110,3 +110,7 @@ fi
 CARGO_ENV="$HOME/.cargo/env"
 [ -e $CARGO_ENV ] && . $CARGO_ENV
 export PATH=$PATH:$HOME/.cargo/bin
+
+# enhancd
+[[ -e ~/.zsh/enhancd/init.sh ]] && source ~/.zsh/enhancd/init.sh
+

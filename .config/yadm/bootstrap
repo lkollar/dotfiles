@@ -104,6 +104,11 @@ if [[ ! -e ~/.tmux/plugins/tpm ]]; then
     cd ~/.tmux/plugins/tpm/scripts && ./install_plugins.sh
 fi
 
+if [[ ! -e ~/.zsh/enhancd ]]; then
+    echo "Installing enhancd"
+    git clone https://github.com/babarot/enhancd ~/.zsh/enhancd
+fi
+
 WSLPATH=$(command -v wslpath)
 if [[ "$WSLPATH" ]]; then
     echo "Detected WSL"
