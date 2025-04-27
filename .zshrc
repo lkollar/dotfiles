@@ -6,8 +6,7 @@ export PATH=~/bin:~/.local/bin:$PATH
 
 export ZSH="$HOME/.oh-my-zsh"
 
-ZSH_THEME="robbyrussell"
-ZSH_COLORIZE_STYLE="catppuccin-mocha"
+ZSH_THEME="agnoster"
 
 zstyle ':omz:update' mode disabled  # disable automatic updates
 
@@ -23,12 +22,7 @@ plugins=(
   vi-mode
 )
 
-
 source $ZSH/oh-my-zsh.sh
-
-# Display the user and the host name in the prompt
-autoload -U colors && colors
-PS1="%{$fg[green]%}%n%{$reset_color%}@%{$fg[cyan]%}${${(%):-%m}} %{$fg[yellow]%}%~ %{$reset_color%}%% "
 
 ### User configuration ########################################################
 
