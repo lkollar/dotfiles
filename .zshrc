@@ -35,7 +35,7 @@ export PAGER="less -F -X"
 
 # Load ~/.dircolors if it exists
 if [ -f ~/.dircolors ]; then
-    on macos dircolors is called gdircolors (part of coreutils package)
+    # on macos dircolors is called gdircolors (part of coreutils package)
     if command -v gdircolors >/dev/null 2>&1; then
         eval "$(gdircolors -b ~/.dircolors)"
     else
