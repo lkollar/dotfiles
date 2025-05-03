@@ -23,6 +23,31 @@ ensure_zsh() {
 yadm gitconfig "user.email" kiss.kollar.laszlo@gmail.com
 yadm gitconfig "user.name" "László Kiss Kollár"
 
+# check if we are on macos
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    echo "Detected macOS"
+
+    brew install \
+        autoconf \
+        automake \
+        coreutil \
+        fd \
+        fzf \
+        gcc \
+        gcc \
+        git \
+        luarocks \
+        neovim \
+        node \
+        ripgrep \
+        rustup \
+        shellcheck \
+        tmux \
+        uv \
+
+    ensure_pew
+    ensure_zsh
+fi
 
 if [ -f /etc/debian_version ]; then
     echo "Detected debian-based distro";
@@ -84,11 +109,12 @@ if [ -f /etc/arch-release ]; then
     ensure_zsh
 fi
 
-if [[ -e /home/lkollar/.oh-my-zsh ]]; then
-    echo "oh-my-zsh already installed"
+ZPLUG_HOME=~/.zplug
+if [[ -e "$ZPLUG_HOME" ]]; then
+    echo "zplug already installed"
 else
-    echo "Installing oh-my-zsh"
-    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended --keep-zshrc
+    echo "Installing zplug"
+    git clone https://github.com/zplug/zplug "$ZPLUG_HOME"
 fi
 
 if command -v pygmentize >/dev/null 2>&1; then

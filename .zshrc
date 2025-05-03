@@ -1,36 +1,53 @@
+### zplug configuration ########################################################
+
+source ~/.zplug/init.zsh
+
+# Make sure to use double quotes
+zplug "zsh-users/zsh-history-substring-search"
+
+zplug mafredri/zsh-async, from:github
+zplug sindresorhus/pure, use:pure.zsh, from:github, as:theme
+
+zplug "plugins/colored-man-pages",  from:oh-my-zsh
+zplug "plugins/git",   from:oh-my-zsh
+
+# Install plugins if there are plugins that have not been installed
+if ! zplug check --verbose; then
+    printf "Install? [y/N]: "
+    if read -q; then
+        echo; zplug install
+    fi
+fi
+
+# Then, source plugins and add commands to $PATH
+zplug load # --verbose
+
+### User configuration ########################################################
 
 # Set this before anything else to ensure all commands are available
 export PATH=~/bin:~/.local/bin:$PATH
-
-### oh-my-zsh configuration ########################################################
-
-export ZSH="$HOME/.oh-my-zsh"
-
-ZSH_THEME="agnoster"
-
-zstyle ':omz:update' mode disabled  # disable automatic updates
-
-COMPLETION_WAITING_DOTS="true"
-DISABLE_UNTRACKED_FILES_DIRTY="true"
-HIST_STAMPS="yyyy-mm-dd"
-
-plugins=(
-  colored-man-pages
-  colorize
-  git
-  ssh
-  vi-mode
-)
-
-source $ZSH/oh-my-zsh.sh
-
-### User configuration ########################################################
 
 export LANG=en_US.UTF-8
 export TERM=screen-256color
 
 # If the entire content fits on the screen, don't clear the screen
 export PAGER="less -F -X"
+
+# Load ~/.dircolors if it exists
+if [ -f ~/.dircolors ]; then
+    on macos dircolors is called gdircolors (part of coreutils package)
+    if command -v gdircolors >/dev/null 2>&1; then
+        eval "$(gdircolors -b ~/.dircolors)"
+    else
+        eval "$(dircolors -b ~/.dircolors)"
+    fi
+fi
+
+# Colours
+alias ls='ls --color=auto'
+alias grep='grep --color=auto'
+alias fgrep='fgrep --color=auto'
+alias egrep='egrep --color=auto'
 
 # Preferred editor for local and remote sessions
 if command -v nvim >/dev/null 2>&1; then
