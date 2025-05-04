@@ -10,6 +10,7 @@ zplug sindresorhus/pure, use:pure.zsh, from:github, as:theme
 
 zplug "plugins/colored-man-pages",  from:oh-my-zsh
 zplug "plugins/git",   from:oh-my-zsh
+zplug "plugins/docker",   from:oh-my-zsh
 
 # Install plugins if there are plugins that have not been installed
 if ! zplug check --verbose; then
