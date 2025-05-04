@@ -2,15 +2,20 @@
 
 source ~/.zplug/init.zsh
 
-# Make sure to use double quotes
 zplug "zsh-users/zsh-history-substring-search"
+zplug "zsh-users/zsh-syntax-highlighting"
+zplug "zsh-users/zsh-completions"
+zplug "zsh-users/zsh-autosuggestions"
 
-zplug mafredri/zsh-async, from:github
-zplug sindresorhus/pure, use:pure.zsh, from:github, as:theme
+zplug "mafredri/zsh-async", from:"github", use:"async.zsh"
+zplug "sindresorhus/pure", use:pure.zsh, from:github, as:theme
 
 zplug "plugins/colored-man-pages",  from:oh-my-zsh
-zplug "plugins/git",   from:oh-my-zsh
-zplug "plugins/docker",   from:oh-my-zsh
+zplug "plugins/git",                from:oh-my-zsh
+zplug "plugins/docker",             from:oh-my-zsh
+
+# This installs fzf itself as well
+zplug "unixorn/fzf-zsh-plugin"
 
 # Install plugins if there are plugins that have not been installed
 if ! zplug check --verbose; then
