@@ -33,7 +33,7 @@ zplug load # --verbose
 # Set this before anything else to ensure all commands are available
 export PATH=~/bin:~/.local/bin:$PATH
 
-export LANG=en_US.UTF-8
+export LANG=en_GB.UTF-8
 export TERM=screen-256color
 
 # If the entire content fits on the screen, don't clear the screen
