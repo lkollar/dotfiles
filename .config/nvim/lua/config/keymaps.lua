@@ -10,3 +10,8 @@ vim.keymap.set({'n', 'x', 'o'}, 'gp', '"+p', {desc = 'Paste clipboard text'})
 -- Shortcuts to insert date & time
 vim.keymap.set("n", "<leader>dt", ':r! date "+\\%Y-\\%m-\\%d \\%a" <CR>', {noremap = true})
 vim.keymap.set("n", "<leader>tt", ':r! date "+\\%H:\\%M:\\%S" <CR>', {noremap = true})
+
+-- LazyVim maps these to swap lines. In tmux these can be triggered by
+-- pressing esc-j/k in quick succession.
+vim.keymap.del({'n', 'i', 'v'}, '<M-j>')
+vim.keymap.del({'n', 'i', 'v'}, '<M-k>')
