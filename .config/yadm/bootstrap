@@ -64,7 +64,8 @@ if [ -f /etc/debian_version ]; then
         zsh
 
     if grep -q "^ID=ubuntu" /etc/os-release; then
-        sudo snap install --classic nvim docker
+        sudo snap install --classic nvim
+        sudo snap install --classic docker
         if ! command -v node; then
             export KEEP_ZSHRC=yes
             cd /tmp && \
