@@ -14,6 +14,8 @@ zplug "plugins/colored-man-pages",  from:oh-my-zsh
 zplug "plugins/git",                from:oh-my-zsh
 zplug "plugins/docker",             from:oh-my-zsh
 
+zplug "jeffreytse/zsh-vi-mode"
+
 # Install plugins if there are plugins that have not been installed
 if ! zplug check --verbose; then
     printf "Install? [y/N]: "
