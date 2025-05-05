@@ -1,3 +1,6 @@
+### profilng ###################################################################
+# zmodload zsh/zprof
+
 ### zplug configuration ########################################################
 
 source ~/.zplug/init.zsh
@@ -134,3 +137,6 @@ CARGO_ENV="$HOME/.cargo/env"
 export PATH=$PATH:$HOME/.cargo/bin
 
 eval "$(fzf --zsh)"
+
+### profilng ###################################################################
+# zprof
