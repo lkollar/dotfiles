@@ -134,13 +134,3 @@ if [[ ! -e ~/.tmux/plugins/tpm ]]; then
     cd ~/.tmux/plugins/tpm/scripts && ./install_plugins.sh
 fi
 
-WSLPATH=$(command -v wslpath)
-if [[ "$WSLPATH" ]]; then
-    echo "Detected WSL"
-    USERPROFILE=$($WSLPATH "$(cmd.exe /c "echo %USERPROFILE%" 2>/dev/null | tr -d '\r')")
-    if [ ! -e "$USERPROFILE/.wezterm.lua" ]; then
-        cp ~/.config/wezterm/wezterm.lua "$USERPROFILE/.wezterm.lua"
-    else
-        echo "wezterm.lua already exists in $USERPROFILE"
-    fi
-fi
