@@ -129,22 +129,9 @@ else
     download_github_release ajeetdsouza/zoxide
 fi
 
-if command -v pygmentize >/dev/null 2>&1; then
-    echo "Pygments already installed"
-else
-    echo "Installing Pygments"
-    pipx install pygments
-    pipx inject pygments catppuccin[pygments]
-fi
-
 if [[ ! -e ~/.tmux/plugins/tpm ]]; then
     git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
     cd ~/.tmux/plugins/tpm/scripts && ./install_plugins.sh
-fi
-
-if [[ ! -e ~/.zsh/enhancd ]]; then
-    echo "Installing enhancd"
-    git clone https://github.com/babarot/enhancd ~/.zsh/enhancd
 fi
 
 WSLPATH=$(command -v wslpath)
