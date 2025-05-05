@@ -14,9 +14,6 @@ zplug "plugins/colored-man-pages",  from:oh-my-zsh
 zplug "plugins/git",                from:oh-my-zsh
 zplug "plugins/docker",             from:oh-my-zsh
 
-# This installs fzf itself as well
-zplug "unixorn/fzf-zsh-plugin"
-
 # Install plugins if there are plugins that have not been installed
 if ! zplug check --verbose; then
     printf "Install? [y/N]: "
