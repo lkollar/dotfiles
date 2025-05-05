@@ -1,6 +1,9 @@
 #!/bin/bash
 # vi: ft=sh
 
+script_dir=$(dirname "$0")
+source "${script_dir}/github_release.sh"
+
 ensure_pew() {
     if ! command -v pew >/dev/null 2>&1; then
         pipx install pew
@@ -17,6 +20,7 @@ ensure_zsh() {
         echo "Shell is already ZSH"
     fi
 }
+
 
 # Configure YADM user just for YADM
 # https://yadm.io/docs/faq#usage
@@ -116,6 +120,13 @@ if [[ -e "$ZPLUG_HOME" ]]; then
 else
     echo "Installing zplug"
     git clone https://github.com/zplug/zplug "$ZPLUG_HOME"
+fi
+
+if command -v zoxide >/dev/null 2>&1; then
+    echo "zoxide already installed"
+else
+    echo "Installing zoxide"
+    download_github_release ajeetdsouza/zoxide
 fi
 
 if command -v pygmentize >/dev/null 2>&1; then

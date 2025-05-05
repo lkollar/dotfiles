@@ -136,6 +136,7 @@ CARGO_ENV="$HOME/.cargo/env"
 export PATH=$PATH:$HOME/.cargo/bin
 
 eval "$(fzf --zsh)"
+eval "$(zoxide init --cmd cd zsh)"
 
 ### profilng ###################################################################
 # zprof
