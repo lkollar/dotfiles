@@ -30,7 +30,7 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     brew install \
         autoconf \
         automake \
-        coreutil \
+        coreutils \
         fd \
         fzf \
         gcc \
