@@ -72,15 +72,20 @@ export MANWIDTH=80
 
 OS=$(uname -s)
 
+if [[ -x /home/linuxbrew/.linuxbrew/bin/brew ]]; then
+    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+fi
+
+if [[ -n "$(command -v brew)" ]]; then
+    export PATH="$BREW_PREFIX/bin:$BREW_PREFIX/sbin:/opt/local/bin:$PATH"
+    export PATH="$BREW_PREFIX/opt/mysql-client/bin:$PATH"
+    # Keep binutils at the end to use macOS tools by default
+    export PATH="$PATH:/opt/homebrew/opt/binutils/bin"
+fi
+
 if [[ $OS = "Darwin" ]]
 then
     if [[ -n "$(command -v brew)" ]]; then
-        export BREW_PREFIX=/opt/homebrew
-
-        export PATH="$BREW_PREFIX/bin:$BREW_PREFIX/sbin:/opt/local/bin:$PATH"
-        export PATH="$BREW_PREFIX/opt/mysql-client/bin:$PATH"
-        # Keep binutils at the end to use macOS tools by default
-        export PATH="$PATH:/opt/homebrew/opt/binutils/bin"
         # Use GNU sed by default
         export PATH="$BREW_PREFIX/opt/gnu-sed/libexec/gnubin:$PATH"
         # Binaries installed by 'go install'

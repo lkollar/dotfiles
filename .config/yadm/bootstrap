@@ -56,29 +56,34 @@ fi
 if [ -f /etc/debian_version ]; then
     echo "Detected debian-based distro";
 
+    if ! command -v brew >/dev/null 2>&1; then
+        echo "Installing Homebrew"
+        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+        eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+    fi
+
     sudo apt update && sudo apt install -y \
+        build-essential \
         curl \
+        file \
         gcc \
+
+    brew install \
         fzf \
+        git \
         keychain \
         luarocks \
+        neovim \
+        node \
         pipx \
         ripgrep \
+        rustup \
         tmux \
+        zoxide \
         zsh
 
     if grep -q "^ID=ubuntu" /etc/os-release; then
-        sudo snap install --classic nvim
         sudo snap install --classic docker
-        if ! command -v node; then
-            export KEEP_ZSHRC=yes
-            cd /tmp && \
-                curl -fsSL https://deb.nodesource.com/setup_23.x -o nodesource_setup.sh && \
-                sudo -E bash nodesource_setup.sh && \
-                sudo apt-get install -y nodejs
-        else
-            echo "Node.js is already installed."
-    fi
     fi
 
     ensure_pew
@@ -120,13 +125,6 @@ if [[ -e "$ZPLUG_HOME" ]]; then
 else
     echo "Installing zplug"
     git clone https://github.com/zplug/zplug "$ZPLUG_HOME"
-fi
-
-if command -v zoxide >/dev/null 2>&1; then
-    echo "zoxide already installed"
-else
-    echo "Installing zoxide"
-    download_github_release ajeetdsouza/zoxide
 fi
 
 if [[ ! -e ~/.tmux/plugins/tpm ]]; then
