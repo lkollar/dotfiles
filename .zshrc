@@ -8,7 +8,6 @@ source ~/.zplug/init.zsh
 zplug "zsh-users/zsh-history-substring-search"
 zplug "zsh-users/zsh-syntax-highlighting"
 zplug "zsh-users/zsh-completions"
-zplug "zsh-users/zsh-autosuggestions"
 
 zplug "mafredri/zsh-async", from:"github", use:"async.zsh"
 zplug "sindresorhus/pure", use:pure.zsh, from:github, as:theme
