@@ -34,11 +34,21 @@ zplug load # --verbose
 # Set this before anything else to ensure all commands are available
 export PATH=~/bin:~/.local/bin:$PATH
 
-export LANG=en_GB.UTF-8
-export TERM=screen-256color
+if [[ -x /home/linuxbrew/.linuxbrew/bin/brew ]]; then
+    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+fi
+
+if [[ -x /opt/homebrew/bin/brew ]]; then
+    eval "$(/opt/homebrew/bin/brew shellenv zsh)"
+    # Keep binutils at the end to use macOS tools by default
+    export PATH="$PATH:/opt/homebrew/opt/binutils/bin"
+fi
 
 # If the entire content fits on the screen, don't clear the screen
 export PAGER="less -F -X"
+
+export LANG=en_GB.UTF-8
+export TERM=screen-256color
 
 # Load ~/.dircolors if it exists
 if [ -f ~/.dircolors ]; then
@@ -71,17 +81,6 @@ set -o vi
 export MANWIDTH=80
 
 OS=$(uname -s)
-
-if [[ -x /home/linuxbrew/.linuxbrew/bin/brew ]]; then
-    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-fi
-
-if [[ -n "$(command -v brew)" ]]; then
-    export PATH="$BREW_PREFIX/bin:$BREW_PREFIX/sbin:/opt/local/bin:$PATH"
-    export PATH="$BREW_PREFIX/opt/mysql-client/bin:$PATH"
-    # Keep binutils at the end to use macOS tools by default
-    export PATH="$PATH:/opt/homebrew/opt/binutils/bin"
-fi
 
 if [[ $OS = "Darwin" ]]
 then
