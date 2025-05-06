@@ -90,6 +90,23 @@ if [ -f /etc/debian_version ]; then
     ensure_zsh
 fi
 
+if [[ $(cat /etc/os-release | grep rhel) ]]; then
+    if ! command -v brew >/dev/null 2>&1; then
+        echo "Installing Homebrew"
+        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+        eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+    fi
+
+    brew install \
+        fzf \
+        neovim \
+        pipx \
+        ripgrep \
+        rustup \
+        zoxide \
+        zsh
+fi
+
 if [ -f /etc/arch-release ]; then
     echo "Detected arch-based distro";
 
