@@ -100,7 +100,6 @@ if [[ $(cat /etc/os-release | grep rhel) ]]; then
     brew install \
         fzf \
         neovim \
-        pipx \
         ripgrep \
         rustup \
         zoxide \
