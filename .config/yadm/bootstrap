@@ -36,6 +36,8 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
         automake \
         coreutils \
         fd \
+        font-jetbrains-mono \
+        font-jetbrains-mono-nerd-font \
         fzf \
         gcc \
         gcc \
