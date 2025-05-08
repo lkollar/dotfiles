@@ -21,6 +21,14 @@ ensure_zsh() {
     fi
 }
 
+ensure_linuxbrew() {
+    if ! command -v brew >/dev/null 2>&1; then
+        echo "Installing Homebrew"
+        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+        eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+    fi
+}
+
 
 # Configure YADM user just for YADM
 # https://yadm.io/docs/faq#usage
@@ -58,11 +66,7 @@ fi
 if [ -f /etc/debian_version ]; then
     echo "Detected debian-based distro";
 
-    if ! command -v brew >/dev/null 2>&1; then
-        echo "Installing Homebrew"
-        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-        eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-    fi
+    ensure_linuxbrew
 
     sudo apt update && sudo apt install -y \
         build-essential \
@@ -90,22 +94,6 @@ if [ -f /etc/debian_version ]; then
 
     ensure_pew
     ensure_zsh
-fi
-
-if [[ $(cat /etc/os-release | grep rhel) ]]; then
-    if ! command -v brew >/dev/null 2>&1; then
-        echo "Installing Homebrew"
-        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-        eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-    fi
-
-    brew install \
-        fzf \
-        neovim \
-        ripgrep \
-        rustup \
-        zoxide \
-        zsh
 fi
 
 if [ -f /etc/arch-release ]; then
