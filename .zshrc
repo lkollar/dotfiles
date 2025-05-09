@@ -35,7 +35,8 @@ zplug load # --verbose
 export PATH=~/bin:~/.local/bin:$PATH
 
 if [[ -x /home/linuxbrew/.linuxbrew/bin/brew ]]; then
-    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+    BREW_PREFIX=$(/home/linuxbrew/.linuxbrew/bin/brew --prefix)
+    export PATH="$PATH:$BREW_PREFIX/bin:$BREW_PREFIX/sbin"
 fi
 
 if [[ -x /opt/homebrew/bin/brew ]]; then
