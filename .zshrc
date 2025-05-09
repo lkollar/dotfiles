@@ -41,6 +41,7 @@ fi
 
 if [[ -x /opt/homebrew/bin/brew ]]; then
     eval "$(/opt/homebrew/bin/brew shellenv zsh)"
+    export MANPATH="$MANPATH:/opt/homebrew/share/man"
     # Keep binutils at the end to use macOS tools by default
     export PATH="$PATH:/opt/homebrew/opt/binutils/bin"
 fi
