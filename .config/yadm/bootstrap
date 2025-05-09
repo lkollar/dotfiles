@@ -96,6 +96,18 @@ if [ -f /etc/debian_version ]; then
     ensure_zsh
 fi
 
+if [[ $(cat /etc/os-release | grep rhel) ]]; then
+    ensure_linuxbrew
+
+    brew install \
+        fzf \
+        neovim \
+        ripgrep \
+        rustup \
+        zoxide \
+        zsh
+fi
+
 if [ -f /etc/arch-release ]; then
     echo "Detected arch-based distro";
 
