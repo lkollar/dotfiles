@@ -9,10 +9,18 @@ vim.o.shiftwidth = 4
 vim.o.softtabstop = 4
 vim.o.conceallevel = 0
 
--- Open .whl files as zip
+-- Open archives with zip and tar
 vim.api.nvim_create_autocmd("BufReadCmd", {
-  pattern = "*.whl",
+  pattern = {"*.whl", "*.tar.gz", "*.tgz"},
   callback = function()
-    vim.cmd("call zip#Browse(expand('<amatch>'))")
+    local file = vim.fn.expand('<amatch>')
+
+    -- Handle .whl files
+    if file:match("%.whl$") then
+      vim.cmd("call zip#Browse(expand('<amatch>'))")
+    -- Handle .tar.gz and .tgz files
+    elseif file:match("%.tar%.gz$") or file:match("%.tgz$") then
+      vim.cmd("call tar#Browse(expand('<amatch>'))")
+    end
   end,
 })
