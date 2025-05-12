@@ -19,6 +19,8 @@ set smartcase
 set incsearch
 set hlsearch
 
+set relativenumber
+
 let mapleader = " "
 
 " --- Enable IdeaVim plugins https://jb.gg/ideavim-plugins
