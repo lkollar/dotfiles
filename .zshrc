@@ -18,6 +18,9 @@ zplug "plugins/docker",             from:oh-my-zsh
 
 zplug "jeffreytse/zsh-vi-mode"
 
+# https://github.com/jeffreytse/zsh-vi-mode/issues/124#issuecomment-2899050914
+setopt prompt_subst
+
 # Install plugins if there are plugins that have not been installed
 if ! zplug check --verbose; then
     printf "Install? [y/N]: "
