@@ -1,37 +1,6 @@
 ### profilng ###################################################################
 # zmodload zsh/zprof
 
-### zplug configuration ########################################################
-
-source ~/.zplug/init.zsh
-
-zplug "zsh-users/zsh-history-substring-search"
-zplug "zsh-users/zsh-syntax-highlighting"
-zplug "zsh-users/zsh-completions"
-
-zplug "mafredri/zsh-async", from:"github", use:"async.zsh"
-zplug "sindresorhus/pure", use:pure.zsh, from:github, as:theme
-
-zplug "plugins/colored-man-pages",  from:oh-my-zsh
-zplug "plugins/git",                from:oh-my-zsh
-zplug "plugins/docker",             from:oh-my-zsh
-
-zplug "jeffreytse/zsh-vi-mode"
-
-# https://github.com/jeffreytse/zsh-vi-mode/issues/124#issuecomment-2899050914
-setopt prompt_subst
-
-# Install plugins if there are plugins that have not been installed
-if ! zplug check --verbose; then
-    printf "Install? [y/N]: "
-    if read -q; then
-        echo; zplug install
-    fi
-fi
-
-# Then, source plugins and add commands to $PATH
-zplug load # --verbose
-
 ### User configuration ########################################################
 
 # Set this before anything else to ensure all commands are available
@@ -143,6 +112,37 @@ fi
 CARGO_ENV="$HOME/.cargo/env"
 [ -e $CARGO_ENV ] && . $CARGO_ENV
 export PATH=$PATH:$HOME/.cargo/bin
+
+### zplug configuration ########################################################
+
+source ~/.zplug/init.zsh
+
+zplug "zsh-users/zsh-history-substring-search"
+zplug "zsh-users/zsh-syntax-highlighting"
+zplug "zsh-users/zsh-completions"
+
+zplug "mafredri/zsh-async", from:"github", use:"async.zsh"
+zplug "sindresorhus/pure", use:pure.zsh, from:github, as:theme
+
+zplug "plugins/colored-man-pages",  from:oh-my-zsh
+zplug "plugins/git",                from:oh-my-zsh
+zplug "plugins/docker",             from:oh-my-zsh
+
+zplug "jeffreytse/zsh-vi-mode"
+
+# https://github.com/jeffreytse/zsh-vi-mode/issues/124#issuecomment-2899050914
+setopt prompt_subst
+
+# Install plugins if there are plugins that have not been installed
+if ! zplug check --verbose; then
+    printf "Install? [y/N]: "
+    if read -q; then
+        echo; zplug install
+    fi
+fi
+
+# Then, source plugins and add commands to $PATH
+zplug load # --verbose
 
 eval "$(fzf --zsh)"
 eval "$(zoxide init --cmd cd zsh)"
