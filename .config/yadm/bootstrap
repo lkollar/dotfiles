@@ -66,27 +66,11 @@ fi
 if [ -f /etc/debian_version ]; then
     echo "Detected debian-based distro";
 
-    ensure_linuxbrew
-
     sudo apt update && sudo apt install -y \
         build-essential \
         curl \
         file \
         gcc \
-
-    brew install \
-        fzf \
-        git \
-        keychain \
-        luarocks \
-        neovim \
-        node \
-        pipx \
-        ripgrep \
-        rustup \
-        tmux \
-        zoxide \
-        zsh
 
     if grep -q "^ID=ubuntu" /etc/os-release; then
         sudo snap install --classic docker
