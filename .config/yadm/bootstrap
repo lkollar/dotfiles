@@ -21,14 +21,6 @@ ensure_zsh() {
     fi
 }
 
-ensure_linuxbrew() {
-    if ! command -v brew >/dev/null 2>&1; then
-        echo "Installing Homebrew"
-        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-        eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-    fi
-}
-
 
 # Configure YADM user just for YADM
 # https://yadm.io/docs/faq#usage
@@ -78,18 +70,6 @@ if [ -f /etc/debian_version ]; then
 
     ensure_pew
     ensure_zsh
-fi
-
-if [[ $(cat /etc/os-release | grep rhel) ]]; then
-    ensure_linuxbrew
-
-    brew install \
-        fzf \
-        neovim \
-        ripgrep \
-        rustup \
-        zoxide \
-        zsh
 fi
 
 if [ -f /etc/arch-release ]; then
