@@ -92,6 +92,7 @@ then
     export http_proxy="$https_proxy"
     export HTTP_PROXY="$https_proxy"
     export TOOLKIT_USERNAME=lkisskol
+    alias ssh-ubuntu='ssh -F ~/.lima/ubuntu-24.04/ssh.config lima-ubuntu-24-04'
 elif [[ "$YADM_CLASS" == "work-linux" ]]
 then
     BB_BINPATHS="/opt/bb/bin:/opt/bb/lib64/bin"
