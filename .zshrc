@@ -151,8 +151,11 @@ zplug load # --verbose
 eval "$(fzf --zsh)"
 eval "$(zoxide init --cmd cd zsh)"
 
-
 command -v claude >/dev/null 2>&1 && alias claude-yolo='claude --dangerously-skip-permissions'
+
+if [ -f ~/.env ]; then
+    source ~/.env
+fi
 
 ### profilng ###################################################################
 # zprof
