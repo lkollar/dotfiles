@@ -1,6 +1,5 @@
 #!/bin/sh
 
-
 # Function to find a suitable binary in a directory
 find_binary() {
     src_dir="$1"
@@ -31,74 +30,62 @@ find_binary() {
     return 1
 }
 
-# Function to download the latest release binary from GitHub (POSIX compatible)
-# Usage: download_github_release project_name [os_override] [arch_override]
-
+# Function to download and install GitHub release binaries
+# Usage: download_github_release owner/repo [binary_name] [install_dir] [use_sudo]
+# - owner/repo: GitHub repository (required)
+# - binary_name: name of binary (optional, defaults to repo name)
+# - install_dir: installation directory (optional, defaults to ~/.local/bin)
+# - use_sudo: "true" to use sudo for installation (optional, defaults to false)
 download_github_release() {
-    project="$1"
-    os_override="$2"
-    arch_override="$3"
+    owner_repo="$1"
+    binary_name="$2"
+    install_dir="$3"
+    use_sudo="$4"
 
-    if [ -z "$project" ]; then
-        echo "Error: Project name is required"
-        echo "Usage: download_latest_release project_name [os_override] [arch_override]"
+    if [ -z "$owner_repo" ]; then
+        echo "Error: Repository name is required"
+        echo "Usage: download_github_release owner/repo [binary_name] [install_dir] [use_sudo]"
         return 1
     fi
 
-    # Extract owner/repo from project name if it contains a slash
-    # Otherwise, assume it's just the repo name without an owner
-    case "$project" in
-        */*) owner_repo="$project" ;;
+    # Extract binary name from repo if not provided
+    if [ -z "$binary_name" ]; then
+        binary_name=$(basename "$owner_repo" | tr '[:upper:]' '[:lower:]')
+    fi
+
+    # Set default install directory
+    if [ -z "$install_dir" ]; then
+        install_dir="$HOME/.local/bin"
+    fi
+
+    # Detect OS and architecture
+    os_name=$(uname -s)
+    case "$os_name" in
+        Linux*) os="linux" ;;
+        Darwin*) os="darwin" ;;
+        MINGW*) os="windows" ;;
+        MSYS*) os="windows" ;;
+        CYGWIN*) os="windows" ;;
         *)
-            echo "Warning: No owner specified, assuming it's a project name only"
-            echo "For best results, use format: owner/repo"
-            owner_repo="$project"
+            echo "Error: Unsupported OS: $os_name"
+            return 1
             ;;
     esac
 
-    # Create the target directory if it doesn't exist
-    bin_dir="$HOME/.local/bin"
-    mkdir -p "$bin_dir"
-
-    # Detect OS and architecture if not provided
-    os=""
-    arch=""
-
-    if [ -z "$os_override" ]; then
-        os_name=$(uname -s)
-        case "$os_name" in
-            Linux*)     os="linux" ;;
-            Darwin*)    os="darwin" ;;
-            MINGW*)     os="windows" ;;
-            MSYS*)      os="windows" ;;
-            CYGWIN*)    os="windows" ;;
-            *)          os="unknown" ;;
-        esac
-    else
-        os="$os_override"
-    fi
-
-    if [ -z "$arch_override" ]; then
-        arch_name=$(uname -m)
-        case "$arch_name" in
-            x86_64|amd64)  arch="amd64" ;;
-            i386|i686)     arch="386" ;;
-            arm64|aarch64) arch="arm64" ;;
-            armv7*)        arch="arm" ;;
-            *)             arch="unknown" ;;
-        esac
-    else
-        arch="$arch_override"
-    fi
-
-    if [ "$os" = "unknown" ] || [ "$arch" = "unknown" ]; then
-        echo "Error: Could not detect OS ($os) or architecture ($arch)"
-        echo "Please provide them as overrides: download_latest_release project_name os_override arch_override"
-        return 1
-    fi
+    arch_name=$(uname -m)
+    case "$arch_name" in
+        x86_64) arch="amd64" ;;
+        aarch64) arch="arm64" ;;
+        armv7l) arch="armv7" ;;
+        i686) arch="i386" ;;
+        *)
+            echo "Error: Unsupported architecture: $arch_name"
+            return 1
+            ;;
+    esac
 
     echo "Detected OS: $os, Architecture: $arch"
-    echo "Checking latest release for $owner_repo..."
+    echo "Fetching latest release for $owner_repo..."
 
     # Get the latest release info
     release_info=$(curl -s "https://api.github.com/repos/$owner_repo/releases/latest")
@@ -108,91 +95,124 @@ download_github_release() {
         return 1
     fi
 
-    # Extract the tag name for version info
+    # Extract version
     version=$(echo "$release_info" | grep '"tag_name":' | sed -E 's/.*"tag_name": "([^"]+)".*/\1/')
     echo "Latest version: $version"
 
-    # Get the list of assets
+    # Get assets
     assets=$(echo "$release_info" | grep '"browser_download_url":' | sed -E 's/.*"browser_download_url": "([^"]+)".*/\1/')
 
-    # Try to find the right asset based on OS and architecture
+    # Try different naming patterns
     download_url=""
     filename=""
 
-    # Try common naming patterns
-    for pattern in "$os[-_]$arch" "$os$arch" "$arch[-_]$os" "$arch$os" "$os"; do
-        if [ -z "$download_url" ]; then
-            download_url=$(echo "$assets" | grep -i "$pattern" | head -n 1)
-            if [ -n "$download_url" ]; then
-                filename=$(basename "$download_url")
-                echo "Found matching asset: $filename"
-                break
-            fi
-        fi
-    done
-
-    # If still not found, show available assets and let user choose
+    # Pattern 1: fzf style - linux_amd64, darwin_amd64, windows_amd64
     if [ -z "$download_url" ]; then
-        echo "Could not automatically find a matching asset for your system ($os-$arch)"
+        download_url=$(echo "$assets" | grep -i "$os[_-]$arch" | head -n 1)
+        if [ -n "$download_url" ]; then
+            filename=$(basename "$download_url")
+            echo "Found asset (os_arch pattern): $filename"
+        fi
+    fi
+
+    # Pattern 2: zoxide style - x86_64-unknown-linux-musl, aarch64-apple-darwin
+    if [ -z "$download_url" ]; then
+        # Convert amd64 back to x86_64 for some tools
+        alt_arch="$arch"
+        if [ "$arch" = "amd64" ]; then
+            alt_arch="x86_64"
+        fi
+        download_url=$(echo "$assets" | grep -i "$alt_arch.*$os" | head -n 1)
+        if [ -n "$download_url" ]; then
+            filename=$(basename "$download_url")
+            echo "Found asset (arch-os pattern): $filename"
+        fi
+    fi
+
+    # Pattern 3: arch_os - amd64-linux, arm64-darwin
+    if [ -z "$download_url" ]; then
+        download_url=$(echo "$assets" | grep -i "$arch[_-]$os" | head -n 1)
+        if [ -n "$download_url" ]; then
+            filename=$(basename "$download_url")
+            echo "Found asset (arch_os pattern): $filename"
+        fi
+    fi
+
+    # Pattern 4: Generic OS match (last resort)
+    if [ -z "$download_url" ]; then
+        download_url=$(echo "$assets" | grep -i "$os" | head -n 1)
+        if [ -n "$download_url" ]; then
+            filename=$(basename "$download_url")
+            echo "Found asset (generic os pattern): $filename"
+        fi
+    fi
+
+    if [ -z "$download_url" ]; then
+        echo "Error: No suitable release found for $os-$arch"
         echo "Available assets:"
         echo "$assets" | sed 's/^/- /'
-        echo "Please try again with OS and architecture overrides that match one of these assets"
         return 1
     fi
 
     echo "Downloading from: $download_url"
 
-    # Create a temporary directory for the download
+    # Create temporary directory
     temp_dir=$(mktemp -d)
     temp_file="$temp_dir/$filename"
 
-    # Download the file
+    # Download
     curl -L -o "$temp_file" "$download_url"
-
     if [ $? -ne 0 ]; then
-        echo "Error: Failed to download the release"
+        echo "Error: Failed to download release"
         rm -rf "$temp_dir"
         return 1
     fi
 
-    # Extract the binary name from the project (assuming it's the repo name)
-    binary_name=$(basename "$project" | tr '[:upper:]' '[:lower:]')
-
-    # Handle different file types
+    # Extract based on file type
     case "$filename" in
-        *.tar.gz|*.tgz)
+        *.tar.gz | *.tgz)
             echo "Extracting tar.gz archive..."
             tar -xzf "$temp_file" -C "$temp_dir"
             bin_file=$(find_binary "$temp_dir" "$binary_name" "$os" "$arch")
-            if [ -n "$bin_file" ]; then
-                cp "$bin_file" "$bin_dir/$binary_name"
-            else
-                echo "Warning: Could not find a suitable binary in the archive"
-                return 1
-            fi
             ;;
         *.zip)
             echo "Extracting zip archive..."
             unzip -q "$temp_file" -d "$temp_dir"
             bin_file=$(find_binary "$temp_dir" "$binary_name" "$os" "$arch")
-            if [ -n "$bin_file" ]; then
-                cp "$bin_file" "$bin_dir/$binary_name"
-            else
-                echo "Warning: Could not find a suitable binary in the archive"
-                return 1
-            fi
             ;;
         *)
-            # Assume it's a direct binary
-            cp "$temp_file" "$bin_dir/$binary_name"
+            # Direct binary
+            bin_file="$temp_file"
             ;;
     esac
 
-    # Make it executable
-    chmod +x "$bin_dir/$binary_name"
+    if [ -z "$bin_file" ] || [ ! -f "$bin_file" ]; then
+        echo "Error: Could not find binary $binary_name in downloaded archive"
+        rm -rf "$temp_dir"
+        return 1
+    fi
 
-    echo "Installation complete: $binary_name has been installed to $bin_dir"
-    echo "Make sure $bin_dir is in your PATH"
+    # Create install directory if it doesn't exist
+    if [ "$use_sudo" = "true" ]; then
+        sudo mkdir -p "$install_dir"
+        echo "Installing $binary_name to $install_dir (with sudo)..."
+        sudo install -m 755 "$bin_file" "$install_dir/$binary_name"
+    else
+        mkdir -p "$install_dir"
+        echo "Installing $binary_name to $install_dir..."
+        install -m 755 "$bin_file" "$install_dir/$binary_name"
+    fi
+
+    if [ $? -eq 0 ]; then
+        echo "Successfully installed $binary_name to $install_dir"
+        if [ "$install_dir" = "$HOME/.local/bin" ]; then
+            echo "Make sure $install_dir is in your PATH"
+        fi
+    else
+        echo "Error: Failed to install $binary_name"
+        rm -rf "$temp_dir"
+        return 1
+    fi
 
     # Clean up
     rm -rf "$temp_dir"

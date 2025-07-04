@@ -21,7 +21,6 @@ ensure_zsh() {
     fi
 }
 
-
 # Configure YADM user just for YADM
 # https://yadm.io/docs/faq#usage
 yadm gitconfig "user.email" kiss.kollar.laszlo@gmail.com
@@ -49,23 +48,28 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
         rustup \
         shellcheck \
         tmux \
-        uv \
+        uv
 
     ensure_pew
     ensure_zsh
 fi
 
 if [ -f /etc/debian_version ]; then
-    echo "Detected debian-based distro";
+    echo "Detected debian-based distro"
 
     sudo apt update && sudo apt install -y \
         build-essential \
         curl \
         file \
-        gcc \
+        gcc
 
     if grep -q "^ID=ubuntu" /etc/os-release; then
         sudo snap install --classic docker
+
+        # Install tools from GitHub releases
+        download_github_release "ajeetdsouza/zoxide" "zoxide" "/usr/local/bin" "true"
+        download_github_release "junegunn/fzf" "fzf" "/usr/local/bin" "true"
+        download_github_release "mvdan/sh" "shfmt" "/usr/local/bin" "true"
     fi
 
     ensure_pew
@@ -73,7 +77,7 @@ if [ -f /etc/debian_version ]; then
 fi
 
 if [ -f /etc/arch-release ]; then
-    echo "Detected arch-based distro";
+    echo "Detected arch-based distro"
 
     sudo pacman -Syu --noconfirm \
         autoconf \
@@ -95,7 +99,7 @@ if [ -f /etc/arch-release ]; then
         tmux \
         unzip \
         uv \
-        zsh \
+        zsh
 
     ensure_pew
     ensure_zsh
@@ -113,4 +117,3 @@ if [[ ! -e ~/.tmux/plugins/tpm ]]; then
     git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
     cd ~/.tmux/plugins/tpm/scripts && ./install_plugins.sh
 fi
-
