@@ -6,6 +6,9 @@
 # Set this before anything else to ensure all commands are available
 export PATH=~/bin:~/.local/bin:$PATH
 
+# 'npm config set prefix ~/.npm-global'
+export PATH=~/.npm-global/bin:$PATH
+
 if [[ -x /home/linuxbrew/.linuxbrew/bin/brew ]]; then
     BREW_PREFIX=$(/home/linuxbrew/.linuxbrew/bin/brew --prefix)
     export PATH="$PATH:$BREW_PREFIX/bin:$BREW_PREFIX/sbin"
