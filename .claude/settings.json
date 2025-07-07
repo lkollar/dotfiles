@@ -12,7 +12,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 /home/lkollar/.claude/telegram_notifier.py"
+            "command": "claude_notifier"
           }
         ]
       }
@@ -22,7 +22,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 /home/lkollar/.claude/telegram_notifier.py"
+            "command": "claude_notifier"
           }
         ]
       }

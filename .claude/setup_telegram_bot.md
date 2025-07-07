@@ -34,7 +34,7 @@ source ~/.zshrc
 
 Test the notification system:
 ```bash
-echo '{"type": "Stop"}' | python3 /home/lkollar/.claude/telegram_notifier.py
+echo '{"type": "Stop"}' | python3 ~/.local/bin/claude_notifier
 ```
 
-You should receive a notification on Telegram.
+You should receive a notification.
