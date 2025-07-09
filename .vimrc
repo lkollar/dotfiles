@@ -58,6 +58,12 @@ autocmd BufNewFile,BufRead Jenkinsfile* set filetype=groovy
 
 au BufReadCmd *.whl call zip#Browse(expand("<amatch>"))
 
+" Set textwidth to 72 characters for git commit messages
+augroup git_commit_settings
+  autocmd!
+  autocmd FileType gitcommit setlocal textwidth=72 formatoptions+=t
+augroup END
+
 "" Tab doesn't work, so let's map it to l and h
 map <C-l> <C-TAB> 
 map <C-h> <C-S-TAB> 
