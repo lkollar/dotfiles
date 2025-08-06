@@ -3,9 +3,6 @@
 
 ### User configuration ########################################################
 
-# https://github.com/jeffreytse/zsh-vi-mode/issues/124#issuecomment-2899050914
-setopt prompt_subst
-
 # Set this before anything else to ensure all commands are available
 export PATH=~/bin:~/.local/bin:$PATH
 
@@ -53,9 +50,6 @@ if command -v nvim >/dev/null 2>&1; then
 else
     export EDITOR=vim
 fi
-
-# Enable Vi mode
-set -o vi
 
 # Sane man page width
 export MANWIDTH=80
@@ -128,8 +122,6 @@ zplug "zsh-users/zsh-history-substring-search"
 zplug "zsh-users/zsh-syntax-highlighting"
 zplug "zsh-users/zsh-completions"
 
-zplug "mafredri/zsh-async", from:"github", use:"async.zsh"
-zplug "sindresorhus/pure", use:pure.zsh, from:github, as:theme
 
 zplug "plugins/colored-man-pages",  from:oh-my-zsh
 zplug "plugins/git",                from:oh-my-zsh
@@ -147,6 +139,11 @@ fi
 
 # Then, source plugins and add commands to $PATH
 zplug load # --verbose
+
+# Initialize starship prompt
+if command -v starship >/dev/null 2>&1; then
+    eval "$(starship init zsh)"
+fi
 
 eval "$(fzf --zsh)"
 eval "$(zoxide init --cmd cd zsh)"

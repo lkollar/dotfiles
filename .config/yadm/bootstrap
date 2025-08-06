@@ -47,6 +47,7 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
         ripgrep \
         rustup \
         shellcheck \
+        starship \
         tmux \
         uv
 
@@ -70,6 +71,7 @@ if [ -f /etc/debian_version ]; then
         download_github_release "ajeetdsouza/zoxide" "zoxide" "/usr/local/bin" "true"
         download_github_release "junegunn/fzf" "fzf" "/usr/local/bin" "true"
         download_github_release "mvdan/sh" "shfmt" "/usr/local/bin" "true"
+        download_github_release "starship/starship" "starship" "/usr/local/bin" "true"
     fi
 
     ensure_pew
