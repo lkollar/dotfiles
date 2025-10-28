@@ -7,6 +7,12 @@ config.color_scheme = 'Gruvbox Dark (Gogh)'
 config.font = wezterm.font('JetBrains Mono NL')
 config.font_size = 14.0
 
+-- Make active pane more prominent
+config.inactive_pane_hsb = {
+  saturation = 0.5,
+  brightness = 0.5,
+}
+
 -- Vim-style pane management keybindings
 config.keys = {
   -- Pane splitting (using Option to avoid conflicts)
