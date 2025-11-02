@@ -132,6 +132,12 @@ config.keys = {
     action = wezterm.action.ShowLauncher
   },
 
+  {
+    key = "F",
+    mods = "CMD|SHIFT",
+    action = wezterm.action.Search({ CaseInSensitiveString = "" })
+  },
+
   -- Rename current tab
   {
     key = 'E',
