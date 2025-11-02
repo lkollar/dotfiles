@@ -73,7 +73,7 @@ config.keys = {
     action = wezterm.action.CloseCurrentPane { confirm = true },
   },
   {
-    key = 'f',
+    key = 'z',
     mods = 'CMD',
     action = wezterm.action.TogglePaneZoomState,
   },
