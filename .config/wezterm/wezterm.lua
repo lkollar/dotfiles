@@ -17,6 +17,14 @@ config.inactive_pane_hsb = {
 }
 
 config.keys = {
+
+  -- Tmux-style scrollback mode
+  {
+    key = '[',
+    mods = 'CMD',
+    action = wezterm.action.ActivateCopyMode,
+  },
+
   -- Vim-style pane management keybindings
 
   -- Vertical pipe (|) -> horizontal split
