@@ -16,6 +16,9 @@ config.inactive_pane_hsb = {
   brightness = 0.5,
 }
 
+-- Hide titlebar
+config.window_decorations = "RESIZE"
+
 config.keys = {
 
   -- Tmux-style scrollback mode
