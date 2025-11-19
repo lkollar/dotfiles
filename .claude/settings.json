@@ -4,7 +4,7 @@
     "allow": [
       "WebFetch(domain:docs.anthropic.com)",
       "Bash(ls:*)",
-      "Bash(terminal-notifier:*)"
+      "Bash(~/.local/bin/claude_notifier:*)"
     ],
     },
     "hooks": {
