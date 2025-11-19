@@ -3,30 +3,21 @@
   "permissions": {
     "allow": [
       "WebFetch(domain:docs.anthropic.com)",
-      "Bash(ls:*)"
+      "Bash(ls:*)",
+      "Bash(terminal-notifier:*)"
     ],
-    "deny": []
-  },
-  "hooks": {
-    "Stop": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "claude_notifier"
-          }
+    },
+    "hooks": {
+        "Notification": [
+            {
+                "matcher": "",
+                "hooks": [
+                    {
+                        "type": "command",
+                        "command": "~/.local/bin/claude_notifier"
+                    }
+                ]
+            }
         ]
-      }
-    ],
-    "Notification": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "claude_notifier"
-          }
-        ]
-      }
-    ]
-  }
+    }
 }

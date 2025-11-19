@@ -1,145 +1,67 @@
 #!/usr/bin/env python3
 """
-Multi-platform notifier for Claude Code hooks
-Sends notifications via terminal-notifier (macOS) and/or Telegram
+Terminal notifier for Claude Code hooks
+Sends notifications via terminal-notifier on macOS
 """
 
 import json
 import sys
 import os
-import urllib.request
-import urllib.parse
-import urllib.error
 import subprocess
 import shutil
-from datetime import datetime
 
 
-def send_terminal_notification(title, message):
-    """Send a notification via terminal-notifier on macOS"""
+def main() -> None:
+    # Check if terminal-notifier is available
     if not shutil.which("terminal-notifier"):
-        return False
-
-    try:
-        subprocess.run([
-            "terminal-notifier",
-            "-title", title,
-            "-message", message,
-            "-sender", "com.anthropic.claude-code"
-        ], check=True, capture_output=True)
-        return True
-    except subprocess.CalledProcessError as e:
-        print(f"terminal-notifier error: {e}", file=sys.stderr)
-        return False
-    except FileNotFoundError:
-        return False
-
-
-def send_telegram_message(message, bot_token, chat_id):
-    """Send a message to Telegram via bot API"""
-    if not bot_token or not chat_id:
-        return False
-
-    url = f"https://api.telegram.org/bot{bot_token}/sendMessage"
-    params = {"chat_id": chat_id, "text": message, "parse_mode": "Markdown"}
-
-    try:
-        data = urllib.parse.urlencode(params).encode("utf-8")
-        req = urllib.request.Request(url, data=data, method="POST")
-        req.add_header("Content-Type", "application/x-www-form-urlencoded")
-
-        with urllib.request.urlopen(req, timeout=10) as response:
-            if response.status == 200:
-                return True
-            else:
-                response_text = response.read().decode("utf-8")
-                print(
-                    f"Telegram API error: {response.status} - {response_text}",
-                    file=sys.stderr,
-                )
-                return False
-    except urllib.error.URLError as e:
-        print(f"Failed to send Telegram message: {e}", file=sys.stderr)
-        return False
-    except Exception as e:
-        print(f"Unexpected error: {e}", file=sys.stderr)
-        return False
-
-
-def main():
-    # Read configuration from environment variables
-    bot_token = os.getenv("TELEGRAM_BOT_TOKEN")
-    chat_id = os.getenv("TELEGRAM_CHAT_ID")
-    enable_telegram = os.getenv("CLAUDE_TELEGRAM_NOTIFICATIONS", "false").lower() == "true"
-    enable_terminal = os.getenv("CLAUDE_TERMINAL_NOTIFICATIONS", "true").lower() == "true"
+        print("Error: terminal-notifier not installed", file=sys.stderr)
+        sys.exit(1)
 
     # Read hook input from stdin
+    stdin_data = sys.stdin.read() if not sys.stdin.isatty() else ""
     try:
-        hook_input = json.loads(sys.stdin.read()) if not sys.stdin.isatty() else {}
+        hook_input = json.loads(stdin_data) if stdin_data else {}
     except json.JSONDecodeError:
-        hook_input = {}
-
-    # Get hook type and context
-    hook_type = hook_input.get("type", "unknown")
-    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
-    # Create notification messages based on hook type
-    if hook_type == "Stop":
-        title = "Claude Code Alert"
-        terminal_message = f"Claude has finished responding and may need your attention.\nTime: {timestamp}\nWorking directory: {os.getcwd()}"
-        telegram_message = (
-            f"🤖 *Claude Code Alert*\n\n"
-            f"Claude has finished responding and may need your attention.\n\n"
-            f"Time: `{timestamp}`\n"
-            f"Working directory: `{os.getcwd()}`"
-        )
-    elif hook_type == "Notification":
-        notification_text = hook_input.get("notification", "No details provided")
-        title = "Claude Code Notification"
-        terminal_message = f"{notification_text}\nTime: {timestamp}"
-        telegram_message = (
-            f"🔔 *Claude Code Notification*\n\n"
-            f"{notification_text}\n\n"
-            f"Time: `{timestamp}`"
-        )
-    else:
-        title = "Claude Code Hook"
-        terminal_message = f"Hook type: {hook_type}\nTime: {timestamp}\nWorking directory: {os.getcwd()}"
-        telegram_message = (
-            f"📢 *Claude Code Hook*\n\n"
-            f"Hook type: `{hook_type}`\n"
-            f"Time: `{timestamp}`\n"
-            f"Working directory: `{os.getcwd()}`"
-        )
-
-    # Send notifications based on configuration
-    notifications_sent = 0
-
-    # Send terminal notification if enabled
-    if enable_terminal:
-        if send_terminal_notification(title, terminal_message):
-            notifications_sent += 1
-            print("Terminal notification sent successfully")
-        else:
-            print("Failed to send terminal notification", file=sys.stderr)
-
-    # Send Telegram notification if enabled and configured
-    if enable_telegram:
-        if bot_token and chat_id:
-            if send_telegram_message(telegram_message, bot_token, chat_id):
-                notifications_sent += 1
-                print("Telegram notification sent successfully")
-            else:
-                print("Failed to send Telegram notification", file=sys.stderr)
-        else:
-            print("Telegram notifications enabled but TELEGRAM_BOT_TOKEN or TELEGRAM_CHAT_ID not set", file=sys.stderr)
-
-    # Exit with error if no notifications were sent and at least one was attempted
-    if notifications_sent == 0 and (enable_terminal or enable_telegram):
-        print("No notifications were sent successfully", file=sys.stderr)
+        print("Error: Invalid JSON input", file=sys.stderr)
         sys.exit(1)
-    elif notifications_sent > 0:
-        print(f"Sent {notifications_sent} notification(s)")
+
+    # Extract message from hook input with type validation
+    message = hook_input.get("message") or hook_input.get("notification") or ""
+    if not isinstance(message, str) or not message:
+        print("Error: No valid message found in hook input", file=sys.stderr)
+        sys.exit(1)
+
+    # Get working directory for group
+    cwd = os.getcwd()
+
+    # Get WezTerm pane ID from environment
+    wezterm_pane = os.getenv("WEZTERM_PANE", "")
+
+    # Build terminal-notifier command matching settings.json
+    cmd = [
+        "terminal-notifier",
+        "-message", message,
+        "-title", "Claude Code",
+        "-group", f"{cwd}:hook",
+        "-activate", "com.github.wez.wezterm"
+    ]
+
+    # Add execute flag if WezTerm pane ID is available
+    if wezterm_pane:
+        wezterm_path = shutil.which("wezterm") or "/opt/homebrew/bin/wezterm"
+        cmd.extend([
+            "-execute", f"{wezterm_path} cli activate-pane --pane-id {wezterm_pane}"
+        ])
+
+    try:
+        subprocess.run(cmd, check=True, capture_output=True, text=True)
+    except subprocess.CalledProcessError as e:
+        stderr = e.stderr.strip() if e.stderr else str(e)
+        print(f"terminal-notifier failed: {stderr}", file=sys.stderr)
+        sys.exit(1)
+    except FileNotFoundError:
+        print("Error: terminal-notifier not found", file=sys.stderr)
+        sys.exit(1)
 
 
 if __name__ == "__main__":
