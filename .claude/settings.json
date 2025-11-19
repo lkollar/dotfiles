@@ -5,7 +5,7 @@
       "WebFetch(domain:docs.anthropic.com)",
       "Bash(ls:*)",
       "Bash(~/.local/bin/claude_notifier:*)"
-    ],
+    ]
     },
     "hooks": {
         "Notification": [
