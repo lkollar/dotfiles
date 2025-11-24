@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Terminal notifier for Claude Code hooks
-Sends notifications via terminal-notifier on macOS
+Sends notifications via terminal-notifier on macOS or tmux alerts on Linux
 """
 
 import json
@@ -13,9 +13,7 @@ import shutil
 
 def main() -> None:
     # Check if terminal-notifier is available
-    if not shutil.which("terminal-notifier"):
-        print("Error: terminal-notifier not installed", file=sys.stderr)
-        sys.exit(1)
+    has_terminal_notifier = shutil.which("terminal-notifier") is not None
 
     # Read hook input from stdin
     stdin_data = sys.stdin.read() if not sys.stdin.isatty() else ""
@@ -31,37 +29,56 @@ def main() -> None:
         print("Error: No valid message found in hook input", file=sys.stderr)
         sys.exit(1)
 
-    # Get working directory for group
-    cwd = os.getcwd()
+    # Try terminal-notifier first (macOS)
+    if has_terminal_notifier:
+        # Get working directory for group
+        cwd = os.getcwd()
 
-    # Get WezTerm pane ID from environment
-    wezterm_pane = os.getenv("WEZTERM_PANE", "")
+        # Get WezTerm pane ID from environment
+        wezterm_pane = os.getenv("WEZTERM_PANE", "")
 
-    # Build terminal-notifier command matching settings.json
-    cmd = [
-        "terminal-notifier",
-        "-message", message,
-        "-title", "Claude Code",
-        "-group", f"{cwd}:hook",
-        "-activate", "com.github.wez.wezterm"
-    ]
+        # Build terminal-notifier command matching settings.json
+        cmd = [
+            "terminal-notifier",
+            "-message", message,
+            "-title", "Claude Code",
+            "-group", f"{cwd}:hook",
+            "-activate", "com.github.wez.wezterm"
+        ]
 
-    # Add execute flag if WezTerm pane ID is available
-    if wezterm_pane:
-        wezterm_path = shutil.which("wezterm") or "/opt/homebrew/bin/wezterm"
-        cmd.extend([
-            "-execute", f"{wezterm_path} cli activate-pane --pane-id {wezterm_pane}"
-        ])
+        # Add execute flag if WezTerm pane ID is available
+        if wezterm_pane:
+            wezterm_path = shutil.which("wezterm") or "/opt/homebrew/bin/wezterm"
+            cmd.extend([
+                "-execute", f"{wezterm_path} cli activate-pane --pane-id {wezterm_pane}"
+            ])
 
-    try:
-        subprocess.run(cmd, check=True, capture_output=True, text=True)
-    except subprocess.CalledProcessError as e:
-        stderr = e.stderr.strip() if e.stderr else str(e)
-        print(f"terminal-notifier failed: {stderr}", file=sys.stderr)
-        sys.exit(1)
-    except FileNotFoundError:
-        print("Error: terminal-notifier not found", file=sys.stderr)
-        sys.exit(1)
+        try:
+            subprocess.run(cmd, check=True, capture_output=True, text=True)
+            return
+        except subprocess.CalledProcessError as e:
+            stderr = e.stderr.strip() if e.stderr else str(e)
+            print(f"terminal-notifier failed: {stderr}", file=sys.stderr)
+            sys.exit(1)
+        except FileNotFoundError:
+            print("Error: terminal-notifier not found", file=sys.stderr)
+            sys.exit(1)
+
+    # Fallback to tmux if available
+    if os.getenv("TMUX"):
+        try:
+            # Use bell character to trigger tmux alert + show message
+            subprocess.run([
+                "tmux", "display-message",
+                "-d", "0",  # Display until keypress
+                f"\aClaude Code: {message}"
+            ], check=True)
+            return
+        except (subprocess.CalledProcessError, FileNotFoundError):
+            pass  # Fall through to stderr
+
+    # Last resort: print to stderr
+    print(f"Claude Code: {message}", file=sys.stderr)
 
 
 if __name__ == "__main__":
