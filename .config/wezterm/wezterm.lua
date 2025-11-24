@@ -156,6 +156,13 @@ config.keys = {
       ),
     },
   },
+
+  -- Claude Code line break support
+  {
+    key="Enter",
+    mods="SHIFT",
+    action=wezterm.action{SendString="\x1b\r"}
+  },
 }
 
 
