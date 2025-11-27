@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+
+# LOGFILE="/tmp/git-commit-msg-debug.log"
+# exec 2>> "$LOGFILE"
+#
+# echo "=== $(date) ===" >> "$LOGFILE"
+
+# Check for staged changes
+if git diff --staged --quiet; then
+  echo "Error: No staged changes to commit" | tee -a "$LOGFILE" >&2
+  exit 1
+fi
+
+# Get staged diff
+DIFF=$(git diff --staged)
+
+# echo "Diff length: ${#DIFF}" >> "$LOGFILE"
+
+# Build prompt with Seven Rules inlined and pipe to claude
+PROMPT=$(cat <<EOF
+Write a git commit message for the following staged changes.
+
+Follow these rules:
+
+1. Limit the subject line to 50 characters
+2. Capitalize the subject line
+3. Do not end the subject line with a period
+4. Use the imperative mood in the subject line
+5. Wrap the body at 72 characters
+6. Use the body to explain what and why vs. how (do not list/summarize changes)
+7. Do not mention AI assistance, Claude co-authorship, or similar attributions
+
+Output only the commit message, nothing else.
+
+Staged diff:
+${DIFF}
+EOF
+)
+
+# echo "Calling claude -p..." >> "$LOGFILE"
+# echo "$PROMPT" | claude -p 2>> "$LOGFILE" | tee -a "$LOGFILE"
+echo "$PROMPT" | claude -p

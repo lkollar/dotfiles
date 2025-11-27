@@ -15,3 +15,7 @@ vim.keymap.set("n", "<leader>tt", ':r! date "+\\%H:\\%M:\\%S" <CR>', {noremap = 
 -- pressing esc-j/k in quick succession.
 vim.keymap.del({'n', 'i', 'v'}, '<M-j>')
 vim.keymap.del({'n', 'i', 'v'}, '<M-k>')
+
+-- Git commit message helper
+vim.api.nvim_create_user_command('CommitMsg', 'read !git-commit-msg', {})
+vim.keymap.set('n', '<leader>cm', ':CommitMsg<CR>', {desc = 'Generate git commit message'})
