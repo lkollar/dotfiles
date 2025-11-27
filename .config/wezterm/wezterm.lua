@@ -165,5 +165,61 @@ config.keys = {
   },
 }
 
+-- Build a simple layout representation from pane positions
+local function get_layout_indicator(panes)
+  local count = #panes
+  if count == 1 then return '□' end
+  if count == 2 then
+    -- Check if horizontal or vertical split
+    local p1, p2 = panes[1], panes[2]
+    if p1.left ~= p2.left then
+      return '◫'  -- side by side (horizontal split)
+    else
+      return '⬒'  -- stacked (vertical split)
+    end
+  end
+  if count == 3 then
+    -- Find unique lefts and tops
+    local lefts, tops = {}, {}
+    for _, p in ipairs(panes) do
+      lefts[p.left] = true
+      tops[p.top] = true
+    end
+    local num_cols = 0
+    local num_rows = 0
+    for _ in pairs(lefts) do num_cols = num_cols + 1 end
+    for _ in pairs(tops) do num_rows = num_rows + 1 end
+
+    if num_cols == 3 then return '|||'  -- 3 columns
+    elseif num_rows == 3 then return '≡'  -- 3 rows
+    else return '⊞'  -- mixed
+    end
+  end
+  -- 4+ panes
+  return '⊞' .. count
+end
+
+-- Show zoom indicator in status bar
+wezterm.on('update-right-status', function(window, pane)
+  local status = ''
+  local tab = pane:tab()
+  if tab then
+    local panes = tab:panes_with_info()
+    local is_zoomed = false
+    for _, p in ipairs(panes) do
+      if p.is_zoomed then
+        is_zoomed = true
+        break
+      end
+    end
+    if is_zoomed and #panes > 1 then
+      status = ' 🔍 ' .. get_layout_indicator(panes) .. ' '
+    end
+  end
+  window:set_right_status(wezterm.format({
+    { Foreground = { Color = '#b8bb26' } },
+    { Text = status },
+  }))
+end)
 
 return config
