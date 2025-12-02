@@ -62,8 +62,5 @@
 [init]
     defaultBranch = main
 
-[include]
-    path = "~/.gitconfig.work"
-
 [includeIf "gitdir:~/github/"]
     path = "~/.gitconfig.local##u.lkollar"

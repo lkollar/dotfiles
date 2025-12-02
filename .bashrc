@@ -92,21 +92,6 @@ fi
 
 export PATH=~/bin:~/.local/bin:$PATH
 
-YADM_CLASS=$(yadm config local.class)
-
-if [ "$YADM_CLASS" == "work-macos" ]
-then
-    export https_proxy="http://127.0.0.1:8888"
-    export HTTPS_PROXY="$https_proxy"
-    export http_proxy="$https_proxy"
-    export HTTP_PROXY="$https_proxy"
-    export TOOLKIT_USERNAME=lkisskol
-elif [ "$YADM_CLASS" == "work-linux" ]
-then
-    export PATH=/opt/bb/bin:/opt/bb/lib64/bin:${PATH}
-    export MANPATH=/opt/bb/share/man:${MANPATH}
-fi
-
 if [[ -z $XDG_CONFIG_HOME ]]; then
     export XDG_CONFIG_HOME="$HOME/.config"
 fi

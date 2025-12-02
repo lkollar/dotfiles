@@ -81,25 +81,6 @@ if [ -f "/proc/version" ] && [[ "$(cat /proc/version)" == *"microsoft"* ]]; then
     export PATH=$PATH:/snap/bin
 fi
 
-YADM_CLASS=$(yadm config local.class)
-
-if [[ "$YADM_CLASS" == "work-macos" ]]
-then
-    source ~/.lcldevrc
-
-    export https_proxy="http://127.0.0.1:8888"
-    export HTTPS_PROXY="$https_proxy"
-    export http_proxy="$https_proxy"
-    export HTTP_PROXY="$https_proxy"
-    alias ssh-ubuntu='ssh -F ~/.lima/ubuntu-24.04/ssh.config lima-ubuntu-24-04'
-elif [[ "$YADM_CLASS" == "work-linux" ]]
-then
-    BB_BINPATHS="/opt/bb/bin:/opt/bb/lib64/bin"
-    BB_MANPATH="/opt/bb/share/man"
-    [[ $PATH != *"$BB_BINPATHS"* ]] && export PATH=$BB_BINPATHS:${PATH}
-    [[ $MANPATH != *"$BB_MANPATH"* ]] && export MANPATH=$BB_MANPATH:${MANPATH}
-fi
-
 if [[ -z $XDG_CONFIG_HOME ]]; then
     export XDG_CONFIG_HOME="$HOME/.config"
 fi
