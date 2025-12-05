@@ -4,20 +4,19 @@
     "allow": [
       "WebFetch(domain:docs.anthropic.com)",
       "Bash(ls:*)",
-      "Bash(~/.local/bin/claude_notifier:*)"
+      "Bash(~/.local/bin/claude_notifier:*)",
+      "Bash(log:*)"
     ]
-    },
-    "hooks": {
-        "Notification": [
-            {
-                "matcher": "",
-                "hooks": [
-                    {
-                        "type": "command",
-                        "command": "~/.local/bin/claude_notifier"
-                    }
-                ]
-            }
+  },
+  "hooks": {
+    "Notification": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.local/bin/claude_notifier"
+          }
         ]
     }
 }
