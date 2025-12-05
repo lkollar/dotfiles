@@ -18,5 +18,11 @@
             "command": "~/.local/bin/claude_notifier"
           }
         ]
-    }
+      }
+    ]
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "/bin/bash ~/.claude/statusline-command.sh"
+  }
 }
