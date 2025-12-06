@@ -7,11 +7,17 @@
 """
 CCometixLine - Simple Python implementation of Claude Code status line.
 Reads JSON from stdin and outputs a formatted ANSI-colored status line.
+
+Run the included test suite with 'python3 -m unittest -v ccline'.
 """
 
 import json
+import os
+import platform
 import subprocess
 import sys
+import unittest
+from datetime import datetime, timedelta
 from pathlib import Path
 from urllib.error import URLError
 from urllib.request import Request, urlopen
@@ -123,13 +129,23 @@ def parse_transcript_line(line: str) -> tuple[float, str] | None:
     """Parse JSONL line and calculate context window percentage.
 
     Returns:
-        (percentage, formatted_tokens) if valid assistant message with tokens, None otherwise
+        (percentage, formatted_tokens) if valid assistant/summary message with tokens, None otherwise
     """
     try:
         entry = json.loads(line)
-        if entry.get("type") == "assistant":
+        entry_type = entry.get("type")
+
+        # Handle both assistant messages and summary entries
+        if entry_type in ("assistant", "summary"):
             usage = entry.get("message", {}).get("usage", {})
-            total_tokens = usage.get("input_tokens", 0) + usage.get("output_tokens", 0)
+
+            # Include all token types (matching CCometixLine's display_tokens behavior)
+            total_tokens = (
+                usage.get("input_tokens", 0) +
+                usage.get("output_tokens", 0) +
+                usage.get("cache_creation_input_tokens", 0) +
+                usage.get("cache_read_input_tokens", 0)
+            )
 
             if total_tokens == 0:
                 return None
@@ -181,7 +197,23 @@ def get_context_info(transcript_path: str) -> tuple[float, str]:
         content = transcript.read_text()
         lines = content.strip().split('\n')
 
-        # Look through last 50 lines for most recent assistant message
+        if not lines:
+            return 0.0, "0"
+
+        # First check if last line is a summary (Claude Code writes cumulative usage here)
+        last_line = lines[-1].strip()
+        if last_line:
+            try:
+                entry = json.loads(last_line)
+                if entry.get("type") == "summary":
+                    # Summary contains cumulative usage - use it!
+                    result = parse_transcript_line(last_line)
+                    if result is not None:
+                        return result
+            except (json.JSONDecodeError, KeyError):
+                pass
+
+        # Fallback: Look through last 50 lines for most recent assistant message
         for line in reversed(lines[-50:]):
             result = parse_transcript_line(line)
             if result is not None:
@@ -330,6 +362,146 @@ def main():
 
     except (json.JSONDecodeError, KeyError, Exception):
         print(f"{CYAN}Claude Code{RESET}")
+
+
+# ============================================================================
+# TESTS - Run with: python -m unittest ccline
+# ============================================================================
+
+
+class TestModelMapping(unittest.TestCase):
+    """Test get_model_display_name()"""
+
+    def test_sonnet_4(self):
+        self.assertEqual(get_model_display_name("claude-sonnet-4-5-20250929"), "Sonnet 4.5")
+
+    def test_opus_4(self):
+        self.assertEqual(get_model_display_name("claude-opus-4-5"), "Opus 4.5")
+
+    def test_sonnet_3_5(self):
+        self.assertEqual(get_model_display_name("claude-3-5-sonnet-20241022"), "Sonnet 3.5")
+
+    def test_haiku(self):
+        self.assertEqual(get_model_display_name("claude-3-haiku"), "Haiku")
+
+    def test_fallback(self):
+        self.assertEqual(get_model_display_name("unknown-model"), "Claude")
+
+
+class TestDirectoryName(unittest.TestCase):
+    """Test get_directory_name()"""
+
+    def test_unix_path(self):
+        self.assertEqual(get_directory_name("/Users/test/project"), "project")
+
+    def test_windows_path(self):
+        # Note: On Unix systems, Path won't parse Windows paths correctly
+        # This tests the function's behavior, which returns the last component
+        result = get_directory_name("C:\\Users\\test\\project")
+        # On Windows: "project", on Unix: full path (no parsing)
+        self.assertIn("project", result)
+
+    def test_single_component(self):
+        self.assertEqual(get_directory_name("project"), "project")
+
+
+class TestTranscriptParsing(unittest.TestCase):
+    """Test parse_transcript_line()"""
+
+    def test_valid_assistant_all_tokens(self):
+        line = '{"type":"assistant","message":{"usage":{"input_tokens":1000,"output_tokens":2000,"cache_creation_input_tokens":500,"cache_read_input_tokens":300}}}'
+        pct, tokens = parse_transcript_line(line)
+        self.assertEqual(pct, 1.9)  # 3800/200000 * 100
+        self.assertEqual(tokens, "3.8k")
+
+    def test_valid_assistant_basic_tokens(self):
+        line = '{"type":"assistant","message":{"usage":{"input_tokens":100,"output_tokens":50}}}'
+        pct, tokens = parse_transcript_line(line)
+        self.assertEqual(pct, 0.075)  # 150/200000 * 100
+        self.assertEqual(tokens, "150")
+
+    def test_summary_entry(self):
+        # Summary entries contain cumulative token usage
+        line = '{"type":"summary","message":{"usage":{"input_tokens":50000,"output_tokens":30000,"cache_creation_input_tokens":10000,"cache_read_input_tokens":5000}}}'
+        pct, tokens = parse_transcript_line(line)
+        self.assertEqual(pct, 47.5)  # 95000/200000 * 100
+        self.assertEqual(tokens, "95.0k")
+
+    def test_user_message(self):
+        line = '{"type":"user","message":{"content":"hello"}}'
+        result = parse_transcript_line(line)
+        self.assertIsNone(result)
+
+    def test_zero_tokens(self):
+        line = '{"type":"assistant","message":{"usage":{"input_tokens":0,"output_tokens":0}}}'
+        result = parse_transcript_line(line)
+        self.assertIsNone(result)
+
+    def test_invalid_json(self):
+        result = parse_transcript_line("not json")
+        self.assertIsNone(result)
+
+
+class TestResetTimeFormatting(unittest.TestCase):
+    """Test format_reset_time()"""
+
+    def test_none_input(self):
+        self.assertEqual(format_reset_time(None), "?")
+
+    def test_valid_timestamp_no_rounding(self):
+        # Test with a timestamp at 30 minutes (shouldn't round up)
+        result = format_reset_time("2025-12-05T14:30:00Z")
+        # Result will vary based on local timezone, but should be M-D-H format
+        self.assertRegex(result, r"\d+-\d+-\d+")
+
+    def test_valid_timestamp_with_rounding(self):
+        # Test with a timestamp at 50 minutes (should round up hour)
+        result = format_reset_time("2025-12-05T14:50:00Z")
+        self.assertRegex(result, r"\d+-\d+-\d+")
+
+    def test_invalid_timestamp(self):
+        self.assertEqual(format_reset_time("invalid"), "?")
+
+
+class TestRendering(unittest.TestCase):
+    """Test render_statusline()"""
+
+    def test_all_segments(self):
+        segments = {
+            "model": "Sonnet 4.5",
+            "directory": "project",
+            "git_branch": "main",
+            "git_status": "✓",
+            "context_pct": 10.5,
+            "tokens": "21.1k",
+            "usage_percent": 42,
+            "usage_reset": "12-5-14"
+        }
+        result = render_statusline(segments)
+        self.assertIn("Sonnet 4.5", result)
+        self.assertIn("project", result)
+        self.assertIn("main", result)
+        self.assertIn("10.5%", result)
+        self.assertIn("21.1k", result)
+        self.assertIn("42%", result)
+        self.assertIn("|", result)
+
+    def test_partial_segments(self):
+        segments = {"model": "Claude", "directory": "test"}
+        result = render_statusline(segments)
+        self.assertIn("Claude", result)
+        self.assertIn("test", result)
+        self.assertNotIn("git", result)
+
+    def test_empty_segments(self):
+        result = render_statusline({})
+        self.assertEqual(result, "")
+
+    def test_ansi_colors_present(self):
+        segments = {"model": "Claude"}
+        result = render_statusline(segments)
+        self.assertIn("\033[", result)  # ANSI escape code
+        self.assertIn("\033[0m", result)  # Reset code
 
 
 if __name__ == "__main__":
