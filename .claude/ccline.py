@@ -13,6 +13,8 @@ import json
 import subprocess
 import sys
 from pathlib import Path
+from urllib.error import URLError
+from urllib.request import Request, urlopen
 
 
 # ANSI color codes
@@ -24,6 +26,10 @@ MAGENTA = "\033[1;35m"
 
 # Model context window limit
 MODEL_CONTEXT_LIMIT = 200000
+
+# Usage API caching
+CACHE_FILE = Path.home() / ".claude" / "ccline" / ".usage_cache.json"
+CACHE_TTL = timedelta(minutes=5)
 
 
 def get_model_display_name(model_id: str) -> str:
@@ -42,6 +48,40 @@ def get_model_display_name(model_id: str) -> str:
 def get_directory_name(current_dir: str) -> str:
     """Extract directory basename from full path."""
     return Path(current_dir).name
+
+
+def get_oauth_token() -> str | None:
+    """Extract OAuth token from Claude Code credentials.
+
+    Returns:
+        OAuth access token or None if unavailable
+    """
+    # Try macOS Keychain first
+    if platform.system() == "Darwin":
+        try:
+            result = subprocess.run(
+                ["security", "find-generic-password", "-a", os.getenv("USER", "user"),
+                 "-w", "-s", "Claude Code-credentials"],
+                capture_output=True,
+                text=True,
+                timeout=2
+            )
+            if result.returncode == 0:
+                creds = json.loads(result.stdout.strip())
+                return creds.get("claudeAiOauth", {}).get("accessToken")
+        except (subprocess.TimeoutExpired, subprocess.CalledProcessError, json.JSONDecodeError, KeyError):
+            pass
+
+    # Fallback: Read from file
+    try:
+        creds_path = Path.home() / ".claude" / ".credentials.json"
+        if creds_path.exists():
+            creds = json.loads(creds_path.read_text())
+            return creds.get("claudeAiOauth", {}).get("accessToken")
+    except (FileNotFoundError, json.JSONDecodeError, KeyError):
+        pass
+
+    return None
 
 
 def get_git_info() -> tuple[str, str]:
@@ -101,6 +141,32 @@ def parse_transcript_line(line: str) -> tuple[float, str] | None:
         return None
 
 
+def format_reset_time(iso_time: str | None) -> str:
+    """Format ISO timestamp to M-D-H format.
+
+    Args:
+        iso_time: ISO 8601 timestamp (e.g., "2025-12-05T20:15:00Z")
+
+    Returns:
+        Formatted time (e.g., "12-5-14" for Dec 5, 14:00 local time)
+    """
+    if not iso_time:
+        return "?"
+
+    try:
+        # Parse ISO timestamp and convert to local time
+        dt = datetime.fromisoformat(iso_time.replace("Z", "+00:00"))
+        local_dt = dt.astimezone()
+
+        # Round up if minutes > 45
+        if local_dt.minute > 45:
+            local_dt = local_dt + timedelta(hours=1)
+
+        return f"{local_dt.month}-{local_dt.day}-{local_dt.hour}"
+    except (ValueError, AttributeError):
+        return "?"
+
+
 def get_context_info(transcript_path: str) -> tuple[float, str]:
     """Parse transcript to get token usage and calculate context window percentage.
 
@@ -126,6 +192,63 @@ def get_context_info(transcript_path: str) -> tuple[float, str]:
         return 0.0, "0"
 
 
+def get_api_usage() -> tuple[int, str] | None:
+    """Fetch API usage with 5-minute caching.
+
+    Returns:
+        (five_hour_percent, reset_time_formatted) or None if unavailable
+    """
+    # Check cache validity
+    if CACHE_FILE.exists():
+        try:
+            cache = json.loads(CACHE_FILE.read_text())
+            cached_at = datetime.fromisoformat(cache["cached_at"])
+            if datetime.now() - cached_at < CACHE_TTL:
+                return cache["five_hour_percent"], cache["reset_time"]
+        except (json.JSONDecodeError, KeyError, ValueError):
+            pass
+
+    # Fetch from API
+    token = get_oauth_token()
+    if not token:
+        return None
+
+    try:
+        req = Request("https://api.anthropic.com/api/oauth/usage")
+        req.add_header("Authorization", f"Bearer {token}")
+        req.add_header("anthropic-beta", "oauth-2025-04-20")
+
+        with urlopen(req, timeout=3) as response:
+            data = json.loads(response.read())
+
+        # Extract data
+        five_hour = data["five_hour"]
+        utilization = five_hour["utilization"]
+        percent = round(utilization)  # API returns percentage already (e.g., 11.0 for 11%)
+
+        # Format reset time (ISO -> M-D-H)
+        reset_time = format_reset_time(five_hour.get("resets_at"))
+
+        # Cache result
+        CACHE_FILE.parent.mkdir(parents=True, exist_ok=True)
+        CACHE_FILE.write_text(json.dumps({
+            "five_hour_percent": percent,
+            "reset_time": reset_time,
+            "cached_at": datetime.now().isoformat()
+        }))
+
+        return percent, reset_time
+    except (URLError, json.JSONDecodeError, KeyError, OSError):
+        # Fallback to stale cache if API fails
+        if CACHE_FILE.exists():
+            try:
+                cache = json.loads(CACHE_FILE.read_text())
+                return cache["five_hour_percent"], cache["reset_time"]
+            except (json.JSONDecodeError, KeyError):
+                pass
+        return None
+
+
 def render_statusline(segments: dict) -> str:
     """Render segments into colored status line with separators.
 
@@ -137,6 +260,8 @@ def render_statusline(segments: dict) -> str:
             - git_status: status indicator (✓ or ●)
             - context_pct: context window percentage
             - tokens: formatted token count
+            - usage_percent: API usage percentage (5-hour limit)
+            - usage_reset: reset time formatted as M-D-H
 
     Returns:
         Formatted ANSI-colored status line
@@ -158,6 +283,11 @@ def render_statusline(segments: dict) -> str:
         pct = segments['context_pct']
         tokens = segments.get('tokens', '0')
         parts.append(f"{MAGENTA}⚡ {pct:.1f}% · {tokens} tokens{RESET}")
+
+    if segments.get("usage_percent") is not None:
+        pct = segments["usage_percent"]
+        reset = segments.get("usage_reset", "")
+        parts.append(f"{MAGENTA}⏱️ {pct}% · {reset}{RESET}")
 
     return " | ".join(parts)
 
@@ -189,6 +319,11 @@ def main():
             if context_pct > 0:
                 segments["context_pct"] = context_pct
                 segments["tokens"] = tokens
+
+        # Usage segment (optional - gracefully fails if OAuth unavailable)
+        usage_data = get_api_usage()
+        if usage_data:
+            segments["usage_percent"], segments["usage_reset"] = usage_data
 
         output = render_statusline(segments)
         print(output)
