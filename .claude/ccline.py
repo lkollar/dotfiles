@@ -158,27 +158,35 @@ def parse_transcript_line(line: str) -> tuple[float, str] | None:
 
 
 def format_reset_time(iso_time: str | None) -> str:
-    """Format ISO timestamp to M-D-H format.
+    """Format ISO timestamp as time remaining (e.g., '3 hr 36 min').
 
     Args:
         iso_time: ISO 8601 timestamp (e.g., "2025-12-05T20:15:00Z")
 
     Returns:
-        Formatted time (e.g., "12-5-14" for Dec 5, 14:00 local time)
+        Formatted time remaining (e.g., "3 hr 36 min", "45 min", or "?" if invalid)
     """
     if not iso_time:
         return "?"
 
     try:
-        # Parse ISO timestamp and convert to local time
+        # Parse ISO timestamp and calculate time remaining
         dt = datetime.fromisoformat(iso_time.replace("Z", "+00:00"))
-        local_dt = dt.astimezone()
+        now = datetime.now(dt.tzinfo)
+        remaining = dt - now
 
-        # Round up if minutes > 45
-        if local_dt.minute > 45:
-            local_dt = local_dt + timedelta(hours=1)
+        # Handle past times
+        if remaining.total_seconds() <= 0:
+            return "0 min"
 
-        return f"{local_dt.month}-{local_dt.day}-{local_dt.hour}"
+        total_minutes = int(remaining.total_seconds() / 60)
+        hours = total_minutes // 60
+        minutes = total_minutes % 60
+
+        if hours > 0:
+            return f"{hours} hr {minutes} min"
+        else:
+            return f"{minutes} min"
     except (ValueError, AttributeError):
         return "?"
 
@@ -319,7 +327,7 @@ def render_statusline(segments: dict) -> str:
     if segments.get("usage_percent") is not None:
         pct = segments["usage_percent"]
         reset = segments.get("usage_reset", "")
-        parts.append(f"{MAGENTA}⏱️ {pct}% · {reset}{RESET}")
+        parts.append(f"{MAGENTA}⏱️ {pct}% · resets in {reset}{RESET}")
 
     return " | ".join(parts)
 
@@ -448,16 +456,27 @@ class TestResetTimeFormatting(unittest.TestCase):
     def test_none_input(self):
         self.assertEqual(format_reset_time(None), "?")
 
-    def test_valid_timestamp_no_rounding(self):
-        # Test with a timestamp at 30 minutes (shouldn't round up)
-        result = format_reset_time("2025-12-05T14:30:00Z")
-        # Result will vary based on local timezone, but should be M-D-H format
-        self.assertRegex(result, r"\d+-\d+-\d+")
+    def test_valid_timestamp_future(self):
+        # Test with a future timestamp (3 hours 36 minutes from now)
+        future = datetime.now().astimezone() + timedelta(hours=3, minutes=36)
+        iso_time = future.isoformat()
+        result = format_reset_time(iso_time)
+        # Should show hours and minutes
+        self.assertRegex(result, r"\d+ hr \d+ min")
 
-    def test_valid_timestamp_with_rounding(self):
-        # Test with a timestamp at 50 minutes (should round up hour)
-        result = format_reset_time("2025-12-05T14:50:00Z")
-        self.assertRegex(result, r"\d+-\d+-\d+")
+    def test_valid_timestamp_minutes_only(self):
+        # Test with a timestamp less than 1 hour away
+        future = datetime.now().astimezone() + timedelta(minutes=45)
+        iso_time = future.isoformat()
+        result = format_reset_time(iso_time)
+        self.assertRegex(result, r"\d+ min")
+
+    def test_past_timestamp(self):
+        # Test with a past timestamp
+        past = datetime.now().astimezone() - timedelta(hours=1)
+        iso_time = past.isoformat()
+        result = format_reset_time(iso_time)
+        self.assertEqual(result, "0 min")
 
     def test_invalid_timestamp(self):
         self.assertEqual(format_reset_time("invalid"), "?")
@@ -475,7 +494,7 @@ class TestRendering(unittest.TestCase):
             "context_pct": 10.5,
             "tokens": "21.1k",
             "usage_percent": 42,
-            "usage_reset": "12-5-14"
+            "usage_reset": "3 hr 36 min"
         }
         result = render_statusline(segments)
         self.assertIn("Sonnet 4.5", result)
@@ -484,6 +503,7 @@ class TestRendering(unittest.TestCase):
         self.assertIn("10.5%", result)
         self.assertIn("21.1k", result)
         self.assertIn("42%", result)
+        self.assertIn("resets in", result)
         self.assertIn("|", result)
 
     def test_partial_segments(self):
