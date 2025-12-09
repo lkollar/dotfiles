@@ -29,6 +29,7 @@ CYAN = "\033[1;36m"
 YELLOW = "\033[1;33m"
 GREEN = "\033[1;32m"
 MAGENTA = "\033[1;35m"
+RED = "\033[1;31m"
 
 # Model context window limit
 MODEL_CONTEXT_LIMIT = 200000
@@ -38,9 +39,17 @@ CACHE_FILE = Path.home() / ".claude" / "ccline" / ".usage_cache.json"
 CACHE_TTL = timedelta(minutes=5)
 
 
+def is_zai_endpoint() -> bool:
+    """Check if using z.ai API endpoint."""
+    base_url = os.getenv("ANTHROPIC_BASE_URL", "")
+    return "z.ai" in base_url
+
+
 def get_model_display_name(model_id: str) -> str:
     """Map model ID to simplified display name."""
-    if "sonnet-4" in model_id:
+    if is_zai_endpoint():
+        return "GLM 4.6"
+    elif "sonnet-4" in model_id:
         return "Sonnet 4.5"
     elif "opus-4" in model_id:
         return "Opus 4.5"
@@ -309,7 +318,9 @@ def render_statusline(segments: dict) -> str:
     parts = []
 
     if segments.get("model"):
-        parts.append(f"{CYAN}🤖 {segments['model']}{RESET}")
+        # Use red color for z.ai models, cyan for Anthropic models
+        model_color = RED if is_zai_endpoint() else CYAN
+        parts.append(f"{model_color}🤖 {segments['model']}{RESET}")
 
     if segments.get("directory"):
         parts.append(f"{YELLOW}📁 {segments['directory']}{RESET}")
@@ -361,9 +372,11 @@ def main():
                 segments["tokens"] = tokens
 
         # Usage segment (optional - gracefully fails if OAuth unavailable)
-        usage_data = get_api_usage()
-        if usage_data:
-            segments["usage_percent"], segments["usage_reset"] = usage_data
+        # Only show for Anthropic API, not for z.ai
+        if not is_zai_endpoint():
+            usage_data = get_api_usage()
+            if usage_data:
+                segments["usage_percent"], segments["usage_reset"] = usage_data
 
         output = render_statusline(segments)
         print(output)
@@ -377,8 +390,84 @@ def main():
 # ============================================================================
 
 
+class TestZaiDetection(unittest.TestCase):
+    """Test is_zai_endpoint()"""
+
+    def setUp(self):
+        # Store original value
+        self.original_base_url = os.environ.get("ANTHROPIC_BASE_URL")
+
+    def tearDown(self):
+        # Restore original value
+        if self.original_base_url is not None:
+            os.environ["ANTHROPIC_BASE_URL"] = self.original_base_url
+        elif "ANTHROPIC_BASE_URL" in os.environ:
+            del os.environ["ANTHROPIC_BASE_URL"]
+
+    def test_zai_endpoint_detected(self):
+        os.environ["ANTHROPIC_BASE_URL"] = "https://api.z.ai/api/anthropic"
+        self.assertTrue(is_zai_endpoint())
+
+    def test_anthropic_endpoint_not_detected(self):
+        os.environ["ANTHROPIC_BASE_URL"] = "https://api.anthropic.com"
+        self.assertFalse(is_zai_endpoint())
+
+    def test_unset_endpoint_not_detected(self):
+        if "ANTHROPIC_BASE_URL" in os.environ:
+            del os.environ["ANTHROPIC_BASE_URL"]
+        self.assertFalse(is_zai_endpoint())
+
+    def test_empty_endpoint_not_detected(self):
+        os.environ["ANTHROPIC_BASE_URL"] = ""
+        self.assertFalse(is_zai_endpoint())
+
+
+class TestModelMappingWithZai(unittest.TestCase):
+    """Test get_model_display_name() with z.ai detection"""
+
+    def setUp(self):
+        # Store original value
+        self.original_base_url = os.environ.get("ANTHROPIC_BASE_URL")
+
+    def tearDown(self):
+        # Restore original value
+        if self.original_base_url is not None:
+            os.environ["ANTHROPIC_BASE_URL"] = self.original_base_url
+        elif "ANTHROPIC_BASE_URL" in os.environ:
+            del os.environ["ANTHROPIC_BASE_URL"]
+
+    def test_zai_returns_glm_model(self):
+        os.environ["ANTHROPIC_BASE_URL"] = "https://api.z.ai/api/anthropic"
+        result = get_model_display_name("any-model-id")
+        self.assertEqual(result, "GLM 4.6")
+
+    def test_anthropic_returns_standard_model(self):
+        os.environ["ANTHROPIC_BASE_URL"] = "https://api.anthropic.com"
+        result = get_model_display_name("claude-sonnet-4-5-20250929")
+        self.assertEqual(result, "Sonnet 4.5")
+
+    def test_unset_returns_standard_model(self):
+        if "ANTHROPIC_BASE_URL" in os.environ:
+            del os.environ["ANTHROPIC_BASE_URL"]
+        result = get_model_display_name("claude-opus-4-5")
+        self.assertEqual(result, "Opus 4.5")
+
+
 class TestModelMapping(unittest.TestCase):
     """Test get_model_display_name()"""
+
+    def setUp(self):
+        # Store original value and ensure z.ai is not set for these tests
+        self.original_base_url = os.environ.get("ANTHROPIC_BASE_URL")
+        if "ANTHROPIC_BASE_URL" in os.environ:
+            del os.environ["ANTHROPIC_BASE_URL"]
+
+    def tearDown(self):
+        # Restore original value
+        if self.original_base_url is not None:
+            os.environ["ANTHROPIC_BASE_URL"] = self.original_base_url
+        elif "ANTHROPIC_BASE_URL" in os.environ:
+            del os.environ["ANTHROPIC_BASE_URL"]
 
     def test_sonnet_4(self):
         self.assertEqual(get_model_display_name("claude-sonnet-4-5-20250929"), "Sonnet 4.5")
@@ -522,6 +611,24 @@ class TestRendering(unittest.TestCase):
         result = render_statusline(segments)
         self.assertIn("\033[", result)  # ANSI escape code
         self.assertIn("\033[0m", result)  # Reset code
+
+    def test_zai_uses_red_color(self):
+        # Mock z.ai endpoint
+        import unittest.mock
+        with unittest.mock.patch('ccline.is_zai_endpoint', return_value=True):
+            segments = {"model": "GLM 4.6"}
+            result = render_statusline(segments)
+            self.assertIn(RED, result)
+            self.assertNotIn(CYAN, result)
+
+    def test_anthropic_uses_cyan_color(self):
+        # Mock Anthropic endpoint
+        import unittest.mock
+        with unittest.mock.patch('ccline.is_zai_endpoint', return_value=False):
+            segments = {"model": "Sonnet 4.5"}
+            result = render_statusline(segments)
+            self.assertIn(CYAN, result)
+            self.assertNotIn(RED, result)
 
 
 if __name__ == "__main__":
