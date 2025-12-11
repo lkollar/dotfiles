@@ -45,24 +45,6 @@ def is_zai_endpoint() -> bool:
     return "z.ai" in base_url
 
 
-def get_model_display_name(model_id: str) -> str:
-    """Map model ID to simplified display name."""
-    if is_zai_endpoint():
-        return "GLM 4.6"
-    elif "sonnet-4" in model_id:
-        return "Sonnet 4.5"
-    elif "opus-4" in model_id:
-        return "Opus 4.5"
-    elif "3-5-sonnet" in model_id:
-        return "Sonnet 3.5"
-    elif "haiku" in model_id:
-        return "Haiku"
-    return "Claude"
-
-
-def get_directory_name(current_dir: str) -> str:
-    """Extract directory basename from full path."""
-    return Path(current_dir).name
 
 
 def get_oauth_token() -> str | None:
@@ -134,38 +116,6 @@ def get_git_info() -> tuple[str, str]:
         return "", ""
 
 
-def parse_transcript_line(line: str) -> tuple[float, str] | None:
-    """Parse JSONL line and calculate context window percentage.
-
-    Returns:
-        (percentage, formatted_tokens) if valid assistant/summary message with tokens, None otherwise
-    """
-    try:
-        entry = json.loads(line)
-        entry_type = entry.get("type")
-
-        # Handle both assistant messages and summary entries
-        if entry_type in ("assistant", "summary"):
-            usage = entry.get("message", {}).get("usage", {})
-
-            # Include all token types (matching CCometixLine's display_tokens behavior)
-            total_tokens = (
-                usage.get("input_tokens", 0) +
-                usage.get("output_tokens", 0) +
-                usage.get("cache_creation_input_tokens", 0) +
-                usage.get("cache_read_input_tokens", 0)
-            )
-
-            if total_tokens == 0:
-                return None
-
-            percentage = (total_tokens / MODEL_CONTEXT_LIMIT) * 100
-            tokens_fmt = f"{total_tokens/1000:.1f}k" if total_tokens >= 1000 else str(total_tokens)
-            return percentage, tokens_fmt
-    except (json.JSONDecodeError, KeyError, TypeError):
-        return None
-
-
 def format_reset_time(iso_time: str | None) -> str:
     """Format ISO timestamp as time remaining (e.g., '3 hr 36 min').
 
@@ -198,47 +148,6 @@ def format_reset_time(iso_time: str | None) -> str:
             return f"{minutes} min"
     except (ValueError, AttributeError):
         return "?"
-
-
-def get_context_info(transcript_path: str) -> tuple[float, str]:
-    """Parse transcript to get token usage and calculate context window percentage.
-
-    Returns:
-        (percentage, formatted_token_count) - e.g., (10.5, "21.1k")
-    """
-    try:
-        transcript = Path(transcript_path)
-        if not transcript.exists():
-            return 0.0, "0"
-
-        content = transcript.read_text()
-        lines = content.strip().split('\n')
-
-        if not lines:
-            return 0.0, "0"
-
-        # First check if last line is a summary (Claude Code writes cumulative usage here)
-        last_line = lines[-1].strip()
-        if last_line:
-            try:
-                entry = json.loads(last_line)
-                if entry.get("type") == "summary":
-                    # Summary contains cumulative usage - use it!
-                    result = parse_transcript_line(last_line)
-                    if result is not None:
-                        return result
-            except (json.JSONDecodeError, KeyError):
-                pass
-
-        # Fallback: Look through last 50 lines for most recent assistant message
-        for line in reversed(lines[-50:]):
-            result = parse_transcript_line(line)
-            if result is not None:
-                return result
-
-        return 0.0, "0"
-    except (FileNotFoundError, IOError):
-        return 0.0, "0"
 
 
 def get_api_usage() -> tuple[int, str] | None:
@@ -348,28 +257,39 @@ def main():
     try:
         input_data = json.load(sys.stdin)
 
-        model_id = input_data.get("model", {}).get("id", "")
-        current_dir = input_data.get("workspace", {}).get("current_dir", "")
-        transcript_path = input_data.get("transcript_path", "")
+        model_display = input_data.get("model", {}).get("display_name", "")
+        current_dir = input_data.get("cwd", "")
+        context_window = input_data.get("context_window", {})
 
         segments = {}
 
-        if model_id:
-            segments["model"] = get_model_display_name(model_id)
+        # Override model display for z.ai endpoint
+        if is_zai_endpoint():
+            model_display = "GLM 4.6"
 
+        if model_display:
+            segments["model"] = model_display
+
+        # Use basename of directory for cleaner display
         if current_dir:
-            segments["directory"] = get_directory_name(current_dir)
+            segments["directory"] = Path(current_dir).name
 
         git_branch, git_status = get_git_info()
         if git_branch:
             segments["git_branch"] = git_branch
             segments["git_status"] = git_status
 
-        if transcript_path:
-            context_pct, tokens = get_context_info(transcript_path)
-            if context_pct > 0:
+        if context_window:
+            input_tokens = context_window.get("total_input_tokens", 0)
+            output_tokens = context_window.get("total_output_tokens", 0)
+            context_size = context_window.get("context_window_size", MODEL_CONTEXT_LIMIT)
+
+            total_tokens = input_tokens + output_tokens
+            if total_tokens > 0:
+                context_pct = (total_tokens / context_size) * 100
+                tokens_fmt = f"{total_tokens/1000:.1f}k" if total_tokens >= 1000 else str(total_tokens)
                 segments["context_pct"] = context_pct
-                segments["tokens"] = tokens
+                segments["tokens"] = tokens_fmt
 
         # Usage segment (optional - gracefully fails if OAuth unavailable)
         # Only show for Anthropic API, not for z.ai
@@ -422,121 +342,6 @@ class TestZaiDetection(unittest.TestCase):
         self.assertFalse(is_zai_endpoint())
 
 
-class TestModelMappingWithZai(unittest.TestCase):
-    """Test get_model_display_name() with z.ai detection"""
-
-    def setUp(self):
-        # Store original value
-        self.original_base_url = os.environ.get("ANTHROPIC_BASE_URL")
-
-    def tearDown(self):
-        # Restore original value
-        if self.original_base_url is not None:
-            os.environ["ANTHROPIC_BASE_URL"] = self.original_base_url
-        elif "ANTHROPIC_BASE_URL" in os.environ:
-            del os.environ["ANTHROPIC_BASE_URL"]
-
-    def test_zai_returns_glm_model(self):
-        os.environ["ANTHROPIC_BASE_URL"] = "https://api.z.ai/api/anthropic"
-        result = get_model_display_name("any-model-id")
-        self.assertEqual(result, "GLM 4.6")
-
-    def test_anthropic_returns_standard_model(self):
-        os.environ["ANTHROPIC_BASE_URL"] = "https://api.anthropic.com"
-        result = get_model_display_name("claude-sonnet-4-5-20250929")
-        self.assertEqual(result, "Sonnet 4.5")
-
-    def test_unset_returns_standard_model(self):
-        if "ANTHROPIC_BASE_URL" in os.environ:
-            del os.environ["ANTHROPIC_BASE_URL"]
-        result = get_model_display_name("claude-opus-4-5")
-        self.assertEqual(result, "Opus 4.5")
-
-
-class TestModelMapping(unittest.TestCase):
-    """Test get_model_display_name()"""
-
-    def setUp(self):
-        # Store original value and ensure z.ai is not set for these tests
-        self.original_base_url = os.environ.get("ANTHROPIC_BASE_URL")
-        if "ANTHROPIC_BASE_URL" in os.environ:
-            del os.environ["ANTHROPIC_BASE_URL"]
-
-    def tearDown(self):
-        # Restore original value
-        if self.original_base_url is not None:
-            os.environ["ANTHROPIC_BASE_URL"] = self.original_base_url
-        elif "ANTHROPIC_BASE_URL" in os.environ:
-            del os.environ["ANTHROPIC_BASE_URL"]
-
-    def test_sonnet_4(self):
-        self.assertEqual(get_model_display_name("claude-sonnet-4-5-20250929"), "Sonnet 4.5")
-
-    def test_opus_4(self):
-        self.assertEqual(get_model_display_name("claude-opus-4-5"), "Opus 4.5")
-
-    def test_sonnet_3_5(self):
-        self.assertEqual(get_model_display_name("claude-3-5-sonnet-20241022"), "Sonnet 3.5")
-
-    def test_haiku(self):
-        self.assertEqual(get_model_display_name("claude-3-haiku"), "Haiku")
-
-    def test_fallback(self):
-        self.assertEqual(get_model_display_name("unknown-model"), "Claude")
-
-
-class TestDirectoryName(unittest.TestCase):
-    """Test get_directory_name()"""
-
-    def test_unix_path(self):
-        self.assertEqual(get_directory_name("/Users/test/project"), "project")
-
-    def test_windows_path(self):
-        # Note: On Unix systems, Path won't parse Windows paths correctly
-        # This tests the function's behavior, which returns the last component
-        result = get_directory_name("C:\\Users\\test\\project")
-        # On Windows: "project", on Unix: full path (no parsing)
-        self.assertIn("project", result)
-
-    def test_single_component(self):
-        self.assertEqual(get_directory_name("project"), "project")
-
-
-class TestTranscriptParsing(unittest.TestCase):
-    """Test parse_transcript_line()"""
-
-    def test_valid_assistant_all_tokens(self):
-        line = '{"type":"assistant","message":{"usage":{"input_tokens":1000,"output_tokens":2000,"cache_creation_input_tokens":500,"cache_read_input_tokens":300}}}'
-        pct, tokens = parse_transcript_line(line)
-        self.assertEqual(pct, 1.9)  # 3800/200000 * 100
-        self.assertEqual(tokens, "3.8k")
-
-    def test_valid_assistant_basic_tokens(self):
-        line = '{"type":"assistant","message":{"usage":{"input_tokens":100,"output_tokens":50}}}'
-        pct, tokens = parse_transcript_line(line)
-        self.assertEqual(pct, 0.075)  # 150/200000 * 100
-        self.assertEqual(tokens, "150")
-
-    def test_summary_entry(self):
-        # Summary entries contain cumulative token usage
-        line = '{"type":"summary","message":{"usage":{"input_tokens":50000,"output_tokens":30000,"cache_creation_input_tokens":10000,"cache_read_input_tokens":5000}}}'
-        pct, tokens = parse_transcript_line(line)
-        self.assertEqual(pct, 47.5)  # 95000/200000 * 100
-        self.assertEqual(tokens, "95.0k")
-
-    def test_user_message(self):
-        line = '{"type":"user","message":{"content":"hello"}}'
-        result = parse_transcript_line(line)
-        self.assertIsNone(result)
-
-    def test_zero_tokens(self):
-        line = '{"type":"assistant","message":{"usage":{"input_tokens":0,"output_tokens":0}}}'
-        result = parse_transcript_line(line)
-        self.assertIsNone(result)
-
-    def test_invalid_json(self):
-        result = parse_transcript_line("not json")
-        self.assertIsNone(result)
 
 
 class TestResetTimeFormatting(unittest.TestCase):
