@@ -23,8 +23,7 @@
   },
   "statusLine": {
     "type": "command",
-    "command": "~/.claude/ccline.py",
-    "padding": 0
+    "command": "npx -y @owloops/claude-powerline@latest --style=powerline"
   },
   "enabledPlugins": {
     "frontend-design@claude-code-plugins": true
