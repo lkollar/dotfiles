@@ -1,7 +1,37 @@
 local wezterm = require 'wezterm'
 local config = wezterm.config_builder()
+local act = wezterm.action
 
 config.send_composed_key_when_left_alt_is_pressed = true
+
+local function is_ssh_process(pane)
+  local name = pane:get_foreground_process_name() or ""
+  name = name:lower()
+  return name:match("ssh$") or name:match("mosh%-client$")
+end
+
+wezterm.on('update-status', function(window, pane)
+  local in_ssh = is_ssh_process(pane)
+  local active = window:active_key_table()
+
+  if in_ssh and active ~= 'ssh_tmux' then
+    window:perform_action(act.ActivateKeyTable{
+      name = 'ssh_tmux',
+      one_shot = false,
+    }, pane)
+  elseif not in_ssh and active == 'ssh_tmux' then
+    window:perform_action(act.ClearKeyTableStack, pane)
+  end
+end)
+
+config.key_tables = {
+  ssh_tmux = {
+    { key = 'h', mods = 'CMD', action = act.SendKey{ key = 'h', mods = 'ALT' } },
+    { key = 'j', mods = 'CMD', action = act.SendKey{ key = 'j', mods = 'ALT' } },
+    { key = 'k', mods = 'CMD', action = act.SendKey{ key = 'k', mods = 'ALT' } },
+    { key = 'l', mods = 'CMD', action = act.SendKey{ key = 'l', mods = 'ALT' } },
+  },
+}
 
 config.color_scheme = 'Gruvbox Dark (Gogh)'
 config.font = wezterm.font {
