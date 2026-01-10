@@ -1,0 +1,14 @@
+#!/bin/sh
+# OSC52 copy for remote tmux -> local clipboard
+payload="$(base64 | tr -d '
+')"
+if [ -n "$TMUX" ]; then
+  tty="$(tmux display-message -p '#{pane_tty}')"
+  if [ -n "$tty" ]; then
+    printf 'Ptmux;]52;c;%s\' "$payload" > "$tty"
+  else
+    printf 'Ptmux;]52;c;%s\' "$payload"
+  fi
+else
+  printf ']52;c;%s' "$payload"
+fi

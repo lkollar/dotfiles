@@ -24,3 +24,24 @@ vim.api.nvim_create_autocmd("BufReadCmd", {
     end
   end,
 })
+
+-- Use OSC52 clipboard for yanks over SSH/tmux
+local function osc52_copy(lines)
+  local text = table.concat(lines, "\n")
+  if text == "" then
+    return
+  end
+  vim.fn.system("~/.local/bin/osc52-copy", text)
+end
+
+vim.g.clipboard = {
+  name = "osc52",
+  copy = {
+    ["+"] = osc52_copy,
+    ["*"] = osc52_copy,
+  },
+  paste = {
+    ["+"] = function() return { "" }, "v" end,
+    ["*"] = function() return { "" }, "v" end,
+  },
+}
