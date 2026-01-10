@@ -63,6 +63,9 @@ config.key_tables = {
     -- Copy mode (prefix + [)
     { key = '[', mods = 'CMD', action = act.SendString '\x01[' },
 
+    -- Paste buffer (prefix + ])
+    { key = ']', mods = 'CMD', action = act.SendString '\x01]' },
+
     -- Rename window (prefix + ,)
     { key = 'E', mods = 'CMD|SHIFT', action = act.SendString '\x01,' },
   },
