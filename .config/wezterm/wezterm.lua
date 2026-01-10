@@ -51,7 +51,6 @@ config.key_tables = {
     { key = 'l', mods = 'CMD|SHIFT', action = act.SendString '\x01L' },
 
     -- Pane management (prefix + x / z / q)
-    { key = 'w', mods = 'CMD', action = act.SendString '\x01x' },
     { key = 'z', mods = 'CMD', action = act.SendString '\x01z' },
     { key = 'm', mods = 'CMD', action = act.SendString '\x01q' },
 
