@@ -13,6 +13,11 @@ $character"""
 [directory]
 style = "blue"
 
+[hostname]
+ssh_only = false
+format = "[$hostname]($style) "
+style = "bright-black"
+
 [character]
 success_symbol = "[❯](purple)"
 error_symbol = "[❯](red)"
