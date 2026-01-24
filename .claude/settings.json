@@ -5,7 +5,10 @@
       "WebFetch(domain:docs.anthropic.com)",
       "Bash(ls:*)",
       "Bash(~/.local/bin/claude_notifier:*)",
-      "Bash(log:*)"
+      "Bash(log:*)",
+      "Read(~/Documents/Notes/**/*)",
+      "Glob(~/Documents/Notes/**/*)",
+      "Grep(~/Documents/Notes/**/*)"
     ]
   },
   "hooks": {
