@@ -66,12 +66,18 @@ if [ -f /etc/debian_version ]; then
 
     if grep -q "^ID=ubuntu" /etc/os-release; then
         sudo snap install --classic docker
-
-        # Install tools from GitHub releases
-        download_github_release "junegunn/fzf" "fzf" "/usr/local/bin" "true"
-        download_github_release "mvdan/sh" "shfmt" "/usr/local/bin" "true"
-        download_github_release "starship/starship" "starship" "/usr/local/bin" "true"
     fi
+
+    # Install tools from GitHub releases
+    local_bin="$HOME/.local/bin"
+    mkdir -p "$local_bin"
+    download_github_release "junegunn/fzf" "fzf" "$local_bin"
+    download_github_release "mvdan/sh" "shfmt" "$local_bin"
+    download_github_release "starship/starship" "starship" "$local_bin"
+    download_github_release "neovim/neovim" "neovim" "$local_bin"
+
+    # Ensure "nvim" is available alongside the "neovim" binary
+    ln -sf "$local_bin/neovim" "$local_bin/nvim"
 
     ensure_pew
     ensure_zsh
