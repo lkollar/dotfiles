@@ -1,74 +1,7 @@
 local wezterm = require 'wezterm'
 local config = wezterm.config_builder()
-local act = wezterm.action
 
 config.send_composed_key_when_left_alt_is_pressed = true
-
-local function is_ssh_process(pane)
-  local name = pane:get_foreground_process_name() or ""
-  name = name:lower()
-  return name:match("ssh$") or name:match("mosh%-client$")
-end
-
--- When an SSH client is active, switch to ssh_tmux key table.
--- This mirrors local WezTerm pane/window shortcuts to tmux prefix sequences.
-wezterm.on('update-status', function(window, pane)
-  local in_ssh = is_ssh_process(pane)
-  local active = window:active_key_table()
-
-  if in_ssh and active ~= 'ssh_tmux' then
-    window:perform_action(act.ActivateKeyTable{
-      name = 'ssh_tmux',
-      one_shot = false,
-    }, pane)
-  elseif not in_ssh and active == 'ssh_tmux' then
-    window:perform_action(act.ClearKeyTableStack, pane)
-  end
-end)
-
-config.key_tables = {
-  ssh_tmux = {
-    -- Pane navigation (prefix + hjkl)
-    { key = 'h', mods = 'CMD', action = act.SendString '\x01h' },
-    { key = 'j', mods = 'CMD', action = act.SendString '\x01j' },
-    { key = 'k', mods = 'CMD', action = act.SendString '\x01k' },
-    { key = 'l', mods = 'CMD', action = act.SendString '\x01l' },
-
-    -- Pane splits (prefix + | / -)
-    { key = '\\', mods = 'CMD', action = act.SendString '\x01|' },
-    { key = '\\', mods = 'CMD|SHIFT', action = act.SendString '\x01|' },
-    { key = '|', mods = 'CMD', action = act.SendString '\x01|' },
-    { key = '|', mods = 'CMD|SHIFT', action = act.SendString '\x01|' },
-    { key = '-', mods = 'CMD', action = act.SendString '\x01-' },
-    { key = '-', mods = 'CMD|SHIFT', action = act.SendString '\x01-' },
-    { key = '_', mods = 'CMD|SHIFT', action = act.SendString '\x01-' },
-    { key = '_', mods = 'CMD', action = act.SendString '\x01-' },
-
-    -- Pane resizing (prefix + H/J/K/L)
-    { key = 'h', mods = 'CMD|SHIFT', action = act.SendString '\x01H' },
-    { key = 'j', mods = 'CMD|SHIFT', action = act.SendString '\x01J' },
-    { key = 'k', mods = 'CMD|SHIFT', action = act.SendString '\x01K' },
-    { key = 'l', mods = 'CMD|SHIFT', action = act.SendString '\x01L' },
-
-    -- Pane management (prefix + x / z / q)
-    { key = 'z', mods = 'CMD', action = act.SendString '\x01z' },
-    { key = 'm', mods = 'CMD', action = act.SendString '\x01q' },
-
-    -- Window navigation (prefix + p / n / w)
-    { key = '{', mods = 'CMD|SHIFT', action = act.SendString '\x01p' },
-    { key = '}', mods = 'CMD|SHIFT', action = act.SendString '\x01n' },
-    { key = 'p', mods = 'CMD', action = act.SendString '\x01w' },
-
-    -- Copy mode (prefix + [)
-    { key = '[', mods = 'CMD', action = act.SendString '\x01[' },
-
-    -- Paste buffer (prefix + ])
-    { key = ']', mods = 'CMD', action = act.SendString '\x01]' },
-
-    -- Rename window (prefix + ,)
-    { key = 'E', mods = 'CMD|SHIFT', action = act.SendString '\x01,' },
-  },
-}
 
 config.color_scheme = 'Gruvbox Dark (Gogh)'
 config.font = wezterm.font {
@@ -100,34 +33,14 @@ config.keys = {
   -- Vertical pipe (|) -> horizontal split
   {
     key = '\\',
-    mods = 'CMD',
-    action = wezterm.action.SplitHorizontal {
-      domain = 'CurrentPaneDomain'
-    },
-  },
-  {
-    key = '\\',
     mods = 'CMD|SHIFT',
     action = wezterm.action.SplitHorizontal {
       domain = 'CurrentPaneDomain'
     },
   },
-  {
-    key = '|',
-    mods = 'CMD|SHIFT',
-    action = wezterm.action.SplitHorizontal {
-      domain = 'CurrentPaneDomain'
-    },
-  },
+  -- Underscore (_) -> vertical split
   {
     key = '-',
-    mods = 'CMD|SHIFT',
-    action = wezterm.action.SplitVertical {
-      domain = 'CurrentPaneDomain'
-    },
-  },
-  {
-    key = '_',
     mods = 'CMD|SHIFT',
     action = wezterm.action.SplitVertical {
       domain = 'CurrentPaneDomain'
