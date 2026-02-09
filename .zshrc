@@ -99,6 +99,7 @@ export PATH=$PATH:$HOME/.cargo/bin
 source ~/.zplug/init.zsh
 
 zplug "zsh-users/zsh-history-substring-search"
+zplug "zsh-users/zsh-autosuggestions"
 zplug "zsh-users/zsh-syntax-highlighting"
 zplug "zsh-users/zsh-completions"
 
