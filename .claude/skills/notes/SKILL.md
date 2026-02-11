@@ -9,12 +9,15 @@ Use this skill to work with Obsidian notes as plain markdown files.
 
 ## Vault Location (Cross-machine)
 
+`.obsidian` is a folder at the vault root.
+
 Resolve vault path in this order:
 
 1. `OBSIDIAN_VAULT_PATH` env var
-2. Current working directory
+2. Current working directory if it contains `.obsidian`
 3. Nearest parent dir containing `.obsidian`
-4. Fallback `~/Documents/Notes`
+4. Search for `.obsidian` under home (glob `~/`); if one hit, use its parent; if many, ask user to choose
+5. Fallback `~/Documents/Notes`
 
 If unresolved, ask user for vault path.
 
