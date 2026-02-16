@@ -49,25 +49,46 @@ local function detect_clipboard_tool()
 end
 
 local function make_paste_fn(tool)
+  local function parse_clipboard_text(text)
+    local linewise = text:sub(-1) == "\n"
+    if linewise then
+      text = text:sub(1, -2)
+    end
+
+    local lines
+    if text == "" then
+      lines = { "" }
+    else
+      lines = vim.split(text, "\n", { plain = true })
+    end
+
+    return lines, linewise and "V" or "v"
+  end
+
   if tool == "pbcopy" then
     return function()
-      return vim.fn.systemlist("pbpaste"), "v"
+      local text = vim.fn.system("pbpaste")
+      return parse_clipboard_text(text)
     end
   elseif tool == "win32yank" then
     return function()
-      return vim.fn.systemlist({ "win32yank.exe", "-o", "--lf" }), "v"
+      local text = vim.fn.system({ "win32yank.exe", "-o", "--lf" })
+      return parse_clipboard_text(text)
     end
   elseif tool == "wl-clipboard" then
     return function()
-      return vim.fn.systemlist({ "wl-paste", "-n" }), "v"
+      local text = vim.fn.system({ "wl-paste", "-n" })
+      return parse_clipboard_text(text)
     end
   elseif tool == "xclip" then
     return function()
-      return vim.fn.systemlist({ "xclip", "-selection", "clipboard", "-o" }), "v"
+      local text = vim.fn.system({ "xclip", "-selection", "clipboard", "-o" })
+      return parse_clipboard_text(text)
     end
   elseif tool == "xsel" then
     return function()
-      return vim.fn.systemlist({ "xsel", "--clipboard", "--output" }), "v"
+      local text = vim.fn.system({ "xsel", "--clipboard", "--output" })
+      return parse_clipboard_text(text)
     end
   end
 
@@ -77,25 +98,33 @@ local function make_paste_fn(tool)
 end
 
 local function make_copy_fn(tool)
+  local function format_clipboard_text(lines, regtype)
+    local text = table.concat(lines, "\n")
+    if regtype == "V" then
+      text = text .. "\n"
+    end
+    return text
+  end
+
   if tool == "pbcopy" then
-    return function(lines)
-      vim.fn.system("pbcopy", lines)
+    return function(lines, regtype)
+      vim.fn.system("pbcopy", format_clipboard_text(lines, regtype))
     end
   elseif tool == "win32yank" then
-    return function(lines)
-      vim.fn.system({ "win32yank.exe", "-i", "--crlf" }, table.concat(lines, "\n"))
+    return function(lines, regtype)
+      vim.fn.system({ "win32yank.exe", "-i", "--crlf" }, format_clipboard_text(lines, regtype))
     end
   elseif tool == "wl-clipboard" then
-    return function(lines)
-      vim.fn.system({ "wl-copy" }, table.concat(lines, "\n"))
+    return function(lines, regtype)
+      vim.fn.system({ "wl-copy" }, format_clipboard_text(lines, regtype))
     end
   elseif tool == "xclip" then
-    return function(lines)
-      vim.fn.system({ "xclip", "-selection", "clipboard" }, table.concat(lines, "\n"))
+    return function(lines, regtype)
+      vim.fn.system({ "xclip", "-selection", "clipboard" }, format_clipboard_text(lines, regtype))
     end
   elseif tool == "xsel" then
-    return function(lines)
-      vim.fn.system({ "xsel", "--clipboard", "--input" }, table.concat(lines, "\n"))
+    return function(lines, regtype)
+      vim.fn.system({ "xsel", "--clipboard", "--input" }, format_clipboard_text(lines, regtype))
     end
   end
 
@@ -103,8 +132,11 @@ local function make_copy_fn(tool)
 end
 
 if is_ssh then
-  local function osc52_copy(lines)
+  local function osc52_copy(lines, regtype)
     local text = table.concat(lines, "\n")
+    if regtype == "V" then
+      text = text .. "\n"
+    end
     if text == "" then
       return
     end
