@@ -24,12 +24,6 @@
 	<integer>128000</integer>
 	<key>AitermURL</key>
 	<string>https://api.openai.com/v1/responses</string>
-	<key>AutoHideTmuxClientSession</key>
-	<true/>
-	<key>ClosingTmuxWindowKillsTmuxWindows</key>
-	<true/>
-	<key>ClosingTmuxWindowKillsTmuxWindows_selection</key>
-	<integer>1</integer>
 	<key>Custom Color Presets</key>
 	<dict>
 		<key>gruvbox</key>
@@ -386,8 +380,6 @@
 	<true/>
 	<key>HotkeyMigratedFromSingleToMulti</key>
 	<true/>
-	<key>IRMemory</key>
-	<integer>4</integer>
 	<key>New Bookmarks</key>
 	<array>
 		<dict>
@@ -1189,13 +1181,13 @@
 				<key>Alpha Component</key>
 				<real>1</real>
 				<key>Blue Component</key>
-				<real>0.61568627450980395</real>
+				<real>0.32737754080861858</real>
 				<key>Color Space</key>
 				<string>P3</string>
 				<key>Green Component</key>
-				<real>0.29411764705882354</real>
+				<real>0.077070096104415439</real>
 				<key>Red Component</key>
-				<real>0.85490196078431369</real>
+				<real>0.50921630859375</real>
 			</dict>
 			<key>Cursor Guide Color</key>
 			<dict>
@@ -1278,7 +1270,7 @@
 				<real>0.90980392694473267</real>
 			</dict>
 			<key>Cursor Type</key>
-			<integer>2</integer>
+			<integer>0</integer>
 			<key>Custom Command</key>
 			<string>No</string>
 			<key>Custom Directory</key>
@@ -1496,7 +1488,7 @@
 			<key>Name</key>
 			<string>Default</string>
 			<key>Non Ascii Font</key>
-			<string>JetBrainsMonoNFM-Regular 14</string>
+			<string>Monaco 12</string>
 			<key>Non-ASCII Anti Aliased</key>
 			<true/>
 			<key>Normal Font</key>
@@ -1600,7 +1592,7 @@
 			<key>Silence Bell</key>
 			<false/>
 			<key>Smart Cursor Color (Light)</key>
-			<false/>
+			<true/>
 			<key>Sync Title</key>
 			<false/>
 			<key>Tags</key>
@@ -1626,7 +1618,7 @@
 			<key>Use Italic Font</key>
 			<true/>
 			<key>Use Non-ASCII Font</key>
-			<true/>
+			<false/>
 			<key>Use Separate Colors for Light and Dark Mode</key>
 			<true/>
 			<key>Vertical Spacing</key>
@@ -2308,6 +2300,8 @@
 				<key>Red Component</key>
 				<real>0.10980392247438431</real>
 			</dict>
+			<key>Background Image Location</key>
+			<string></string>
 			<key>Badge Color</key>
 			<dict>
 				<key>Alpha Component</key>
@@ -2350,7 +2344,7 @@
 			<key>Blinking Cursor</key>
 			<true/>
 			<key>Blur</key>
-			<true/>
+			<false/>
 			<key>Bold Color</key>
 			<dict>
 				<key>Alpha Component</key>
@@ -2433,13 +2427,13 @@
 				<key>Alpha Component</key>
 				<real>1</real>
 				<key>Blue Component</key>
-				<real>0.54979556357763404</real>
+				<real>0.17255082726478577</real>
 				<key>Color Space</key>
-				<string>P3</string>
+				<string>Calibrated</string>
 				<key>Green Component</key>
-				<real>0.061864403924581556</real>
+				<real>0.17254787683486938</real>
 				<key>Red Component</key>
-				<real>0.90936279296875</real>
+				<real>0.17255303263664246</real>
 			</dict>
 			<key>Cursor Guide Color</key>
 			<dict>
@@ -2472,13 +2466,13 @@
 				<key>Alpha Component</key>
 				<real>0.25</real>
 				<key>Blue Component</key>
-				<real>1</real>
+				<real>0.43902587890625</real>
 				<key>Color Space</key>
-				<string>Calibrated</string>
+				<string>P3</string>
 				<key>Green Component</key>
-				<real>0.9100000262260437</real>
+				<real>0.434490327022651</real>
 				<key>Red Component</key>
-				<real>0.64999997615814209</real>
+				<real>0.42347350972624581</real>
 			</dict>
 			<key>Cursor Text Color</key>
 			<dict>
@@ -2588,86 +2582,7 @@
 				<string>telnet</string>
 			</array>
 			<key>Keyboard Map</key>
-			<dict>
-				<key>0x5f-0x120000-0x1b</key>
-				<dict>
-					<key>Action</key>
-					<integer>28</integer>
-					<key>Apply Mode</key>
-					<integer>0</integer>
-					<key>Escaping</key>
-					<integer>2</integer>
-					<key>Text</key>
-					<string>128CC355-34B6-46B4-B5AE-B0EF08064A59</string>
-					<key>Version</key>
-					<integer>2</integer>
-				</dict>
-				<key>0x68-0x100000-0x4</key>
-				<dict>
-					<key>Action</key>
-					<integer>18</integer>
-					<key>Apply Mode</key>
-					<integer>0</integer>
-					<key>Escaping</key>
-					<integer>2</integer>
-					<key>Text</key>
-					<string></string>
-					<key>Version</key>
-					<integer>2</integer>
-				</dict>
-				<key>0x6a-0x100000-0x26</key>
-				<dict>
-					<key>Action</key>
-					<integer>21</integer>
-					<key>Apply Mode</key>
-					<integer>0</integer>
-					<key>Escaping</key>
-					<integer>2</integer>
-					<key>Text</key>
-					<string></string>
-					<key>Version</key>
-					<integer>2</integer>
-				</dict>
-				<key>0x6b-0x100000-0x28</key>
-				<dict>
-					<key>Action</key>
-					<integer>20</integer>
-					<key>Apply Mode</key>
-					<integer>0</integer>
-					<key>Escaping</key>
-					<integer>2</integer>
-					<key>Text</key>
-					<string></string>
-					<key>Version</key>
-					<integer>2</integer>
-				</dict>
-				<key>0x6c-0x100000-0x25</key>
-				<dict>
-					<key>Action</key>
-					<integer>19</integer>
-					<key>Apply Mode</key>
-					<integer>0</integer>
-					<key>Escaping</key>
-					<integer>2</integer>
-					<key>Text</key>
-					<string></string>
-					<key>Version</key>
-					<integer>2</integer>
-				</dict>
-				<key>0x7c-0x120000-0x2a</key>
-				<dict>
-					<key>Action</key>
-					<integer>29</integer>
-					<key>Apply Mode</key>
-					<integer>0</integer>
-					<key>Escaping</key>
-					<integer>2</integer>
-					<key>Text</key>
-					<string>128CC355-34B6-46B4-B5AE-B0EF08064A59</string>
-					<key>Version</key>
-					<integer>2</integer>
-				</dict>
-			</dict>
+			<dict/>
 			<key>Link Color</key>
 			<dict>
 				<key>Alpha Component</key>
@@ -2738,7 +2653,7 @@
 			<key>Name</key>
 			<string>tmux</string>
 			<key>Non Ascii Font</key>
-			<string>JetBrainsMonoNFM-Regular 12</string>
+			<string>Monaco 12</string>
 			<key>Non-ASCII Anti Aliased</key>
 			<true/>
 			<key>Normal Font</key>
@@ -2754,7 +2669,7 @@
 			<key>Screen</key>
 			<integer>-1</integer>
 			<key>Scrollback Lines</key>
-			<integer>0</integer>
+			<integer>1000</integer>
 			<key>Selected Text Color</key>
 			<dict>
 				<key>Alpha Component</key>
@@ -2839,31 +2754,14 @@
 			<string></string>
 			<key>Silence Bell</key>
 			<false/>
-			<key>Space</key>
-			<integer>0</integer>
 			<key>Sync Title</key>
 			<false/>
-			<key>Tab Color (Light)</key>
-			<dict>
-				<key>Alpha Component</key>
-				<real>1</real>
-				<key>Blue Component</key>
-				<real>0.59999999999999998</real>
-				<key>Color Space</key>
-				<string>P3</string>
-				<key>Green Component</key>
-				<real>0.40000000000000002</real>
-				<key>Red Component</key>
-				<real>0.20000000000000001</real>
-			</dict>
 			<key>Tags</key>
 			<array/>
 			<key>Terminal Type</key>
 			<string>xterm-256color</string>
 			<key>Thin Strokes</key>
 			<integer>4</integer>
-			<key>Title Components</key>
-			<integer>64</integer>
 			<key>Transparency</key>
 			<real>0.045933067375886524</real>
 			<key>Unlimited Scrollback</key>
@@ -2879,10 +2777,8 @@
 			<key>Use Italic Font</key>
 			<true/>
 			<key>Use Non-ASCII Font</key>
-			<true/>
+			<false/>
 			<key>Use Separate Colors for Light and Dark Mode</key>
-			<true/>
-			<key>Use Tab Color (Light)</key>
 			<true/>
 			<key>Vertical Spacing</key>
 			<real>1</real>
@@ -2931,16 +2827,12 @@
 	<true/>
 	<key>SeparateStatusBarsPerPane</key>
 	<true/>
-	<key>ShowFullScreenTabBar</key>
-	<false/>
 	<key>SoundForEsc</key>
 	<false/>
 	<key>SplitPaneDimmingAmount</key>
 	<real>0.10249393203883492</real>
 	<key>TabStyleWithAutomaticOption</key>
 	<integer>5</integer>
-	<key>TmuxSyncClipboard</key>
-	<false/>
 	<key>ToolbeltTools</key>
 	<array>
 		<string>Profiles</string>
@@ -2952,8 +2844,6 @@
 	<false/>
 	<key>com.apple.WebPrivacy.ResourceMonitorURLsVersion</key>
 	<string>qrsAAAGXnXBrwGxMO6s=</string>
-	<key>findMode_iTerm</key>
-	<integer>0</integer>
 	<key>kCPKSelectionViewPreferredModeKey</key>
 	<integer>0</integer>
 	<key>kCPKSelectionViewShowHSBTextFieldsKey</key>
