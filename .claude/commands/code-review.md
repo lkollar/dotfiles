@@ -1,5 +1,5 @@
 ---
-allowed-tools: Bash(git diff:*), Bash(git log:*)
+allowed-tools: Bash(git status:*), Bash(git diff:*), Bash(git log:*), Bash(git branch:*)
 description: Perform a comprehensive code review of recent changes
 ---
 
@@ -12,27 +12,67 @@ description: Perform a comprehensive code review of recent changes
 
 ## Your task
 
-Perform a comprehensive code review focusing on:
+Review the recent changes using these general software design principles:
 
-1. **Code Quality**: Check for readability, maintainability, and adherence to best practices
-2. **Security**: Look for potential vulnerabilities or security issues
-3. **Performance**: Identify potential performance bottlenecks
-4. **Testing**: Assess test coverage and quality
-5. **Documentation**: Check if code is properly documented
+1. **Minimize complexity**
+   - Flag change amplification (same change required in many places).
+   - Flag high cognitive load (too much context needed to understand code).
+   - Flag unknown unknowns (unclear behavior, hidden assumptions, surprising flow).
 
-### Software Design Principles
+2. **Optimize for readability and obviousness**
+   - Prefer code that is easy to read over clever code that is easy to write.
+   - Check naming precision and consistency.
+   - Call out violations of project conventions.
 
-Also evaluate the changes against these design principles (from Ousterhout's *A Philosophy of Software Design*). Flag violations where they apply:
+3. **Favor deep modules and clean abstractions**
+   - Interfaces should stay simple while implementations absorb complexity.
+   - Identify shallow wrappers, pass-through methods, and pass-through variables.
+   - Check whether adjacent layers duplicate the same abstraction.
 
-1. **Deep modules**: Modules should have simple interfaces relative to the functionality they provide. Flag shallow classes/functions that add interface complexity without meaningful logic (classitis, thin wrappers).
-2. **Information hiding**: Implementation details should stay internal. Flag leakage where multiple modules share knowledge of the same design decision or data format.
-3. **No pass-throughs**: Flag pass-through methods (signature mirrors the callee), pass-through variables threaded through many layers, and decorators that don't justify their existence.
-4. **Pull complexity down**: Modules should absorb complexity for their callers, not push it outward via excessive config parameters or exceptions. Flag APIs that force callers to handle problems the module could resolve internally.
-5. **Define errors out of existence**: Flag unnecessary exceptions and error conditions. Prefer APIs where error cases simply can't arise. Flag over-defensive code handling impossible scenarios.
-6. **Together or apart**: Related code belongs together; flag splits that increase interface count without reducing complexity. Conversely, flag unrelated concerns jammed into one module. Flag code duplication that should be unified.
-7. **Different layer, different abstraction**: Adjacent layers should operate at different abstraction levels. Flag cases where a layer merely relays data/calls without transforming the abstraction.
-8. **Consistency**: Similar things should be done similarly. Flag convention violations, inconsistent naming, and divergent patterns for equivalent operations.
-9. **Obviousness**: Code should be readable without deep study. Flag non-obvious code that lacks comments explaining *what* and *why* (not *how*). Flag generic names (data, result, info, tmp) that don't convey precise meaning.
-10. **Strategic over tactical**: Flag quick hacks that increase complexity. Each change should leave the design at least as clean as before.
+4. **Enforce information hiding**
+   - Ensure implementation details do not leak across module boundaries.
+   - Highlight duplicated knowledge across files/modules.
+   - Suggest merging or extraction when it reduces interface surface.
 
-Provide specific, actionable feedback with line-by-line comments where appropriate.
+5. **Pull complexity downward**
+   - Prefer solving hard logic once in lower-level modules.
+   - Avoid pushing complexity to every caller through extra flags/config.
+   - Ensure defaults handle common cases without special setup.
+
+6. **Keep error handling simple and intentional**
+   - Reduce unnecessary exception paths and special cases.
+   - Prefer masking/aggregating low-level errors when details are not needed upstream.
+   - Ensure failures preserve system consistency.
+
+7. **Design for evolution, not just immediate correctness**
+   - Call out tactical shortcuts that increase long-term maintenance cost.
+   - Suggest small strategic refactors when they simplify future change.
+   - If design choices look weak, propose at least one alternative design direction.
+
+8. **Performance and security by design**
+   - Identify security risks from weak boundaries, unsafe defaults, or data leaks.
+   - Identify likely hot-path costs and unnecessary special-case branching.
+   - Recommend measurement-driven optimization (measure first, then tune).
+
+9. **Tests and documentation as design tools**
+   - Verify tests cover normal path, boundary cases, and failure paths.
+   - Check that comments explain non-obvious intent, constraints, and cross-module decisions.
+   - Reject comments that restate code.
+
+## Output format
+
+Return concise review feedback in this structure:
+
+1. **Top risks (highest impact first)**
+   - 3-7 bullets with severity (`high|medium|low`), file:line, issue, and why it matters.
+
+2. **Design assessment**
+   - Short notes on abstraction depth, information hiding, and change amplification.
+
+3. **Security/performance/testing/docs gaps**
+   - Only concrete findings. If none, explicitly say "No significant issues found" for that category.
+
+4. **Actionable fixes**
+   - Specific recommendations, prioritized, with smallest safe next step first.
+
+Be specific. Prefer concrete examples over generic advice.
