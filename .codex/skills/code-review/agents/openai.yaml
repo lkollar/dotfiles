@@ -1,0 +1,4 @@
+interface:
+  display_name: "Code Review"
+  short_description: "Review recent code changes for risks"
+  default_prompt: "Use $code-review to review the recent changes in this repo."
