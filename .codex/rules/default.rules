@@ -1,0 +1,83 @@
+prefix_rule(pattern=["~/.local/bin/claude_notifier"], decision="allow")
+
+# Read-only git allowlist
+prefix_rule(
+    pattern=["git", ["status", "diff", "log", "show", "rev-parse", "ls-files", "ls-tree", "cat-file", "blame", "grep", "shortlog", "describe", "symbolic-ref", "fetch"]],
+    decision="allow",
+    justification="Always allow read-only git inspection commands",
+)
+
+prefix_rule(
+    pattern=["git", "remote", "-v"],
+    decision="allow",
+    justification="Allow read-only git remote listing",
+)
+
+prefix_rule(
+    pattern=["git", "branch", "--show-current"],
+    decision="allow",
+    justification="Allow read-only git branch query",
+)
+
+prefix_rule(
+    pattern=["git", "config", "--get"],
+    decision="allow",
+    justification="Allow read-only git config query",
+)
+
+prefix_rule(
+    pattern=["git", "reflog"],
+    decision="allow",
+    justification="Allow read-only git reflog query",
+)
+
+# Read-only gh allowlist
+prefix_rule(
+    pattern=["gh", "pr", ["view", "list", "checks", "diff", "status"]],
+    decision="allow",
+    justification="Always allow read-only gh pr commands",
+)
+
+prefix_rule(
+    pattern=["gh", "run", ["view", "list", "watch"]],
+    decision="allow",
+    justification="Always allow read-only gh run commands",
+)
+
+prefix_rule(
+    pattern=["gh", "issue", ["view", "list"]],
+    decision="allow",
+    justification="Always allow read-only gh issue commands",
+)
+
+prefix_rule(
+    pattern=["gh", "repo", "view"],
+    decision="allow",
+    justification="Always allow read-only gh repo commands",
+)
+
+prefix_rule(
+    pattern=["gh", "auth", "status"],
+    decision="allow",
+    justification="Allow read-only gh auth query",
+)
+
+prefix_rule(
+    pattern=["gh", "repo", "list"],
+    decision="allow",
+    justification="Allow read-only gh repo listing",
+)
+
+prefix_rule(
+    pattern=["gh", "search", "prs"],
+    decision="allow",
+    justification="Allow read-only gh PR search",
+)
+
+prefix_rule(
+    pattern=["gh", "search", "issues"],
+    decision="allow",
+    justification="Allow read-only gh issue search",
+)
+prefix_rule(pattern=["gh", "repo", "view"], decision="allow")
+prefix_rule(pattern=["gh", "pr", "list"], decision="allow")
