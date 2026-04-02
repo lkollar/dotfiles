@@ -4,7 +4,7 @@
     "allow": [
       "WebFetch(domain:docs.anthropic.com)",
       "Bash(ls:*)",
-      "Bash(~/.local/bin/claude_notifier:*)",
+      "Bash(~/.local/bin/agent_notifier:*)",
       "Bash(log:*)",
       "Read(~/Documents/Notes/**/*)",
       "Glob(~/Documents/Notes/**/*)",
@@ -18,7 +18,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "~/.local/bin/claude_notifier"
+            "command": "~/.local/bin/agent_notifier"
           }
         ]
       }
