@@ -112,6 +112,37 @@ if [ -f /etc/arch-release ]; then
     ensure_zsh
 fi
 
+if grep -q "^ID=fedora$" /etc/os-release; then
+    echo "Detected Fedora"
+
+    sudo dnf install -y \
+        curl \
+        file \
+        fzf \
+        gcc \
+        gcc-c++ \
+        git \
+        luarocks \
+        make \
+        neovim \
+        nodejs \
+        pipx \
+        ripgrep \
+        rustup \
+        shellcheck \
+        tmux \
+        unzip \
+        uv \
+        zsh
+
+    local_bin="$HOME/.local/bin"
+    mkdir -p "$local_bin"
+    download_github_release "starship/starship" "starship" "$local_bin"
+
+    ensure_pew
+    ensure_zsh
+fi
+
 ZPLUG_HOME=~/.zplug
 if [[ -e "$ZPLUG_HOME" ]]; then
     echo "zplug already installed"
