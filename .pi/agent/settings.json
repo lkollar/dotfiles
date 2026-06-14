@@ -1,0 +1,11 @@
+{
+  "lastChangelogVersion": "0.79.3",
+  "defaultProvider": "opencode-go",
+  "defaultModel": "deepseek-v4-pro",
+  "defaultThinkingLevel": "high",
+  "hideThinkingBlock": false,
+  "packages": [
+    "git:github.com/obra/superpowers@dev",
+    "git:github.com/lmilojevicc/pi-zentui"
+  ]
+}
