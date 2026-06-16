@@ -81,3 +81,6 @@ prefix_rule(
 )
 prefix_rule(pattern=["gh", "repo", "view"], decision="allow")
 prefix_rule(pattern=["gh", "pr", "list"], decision="allow")
+prefix_rule(pattern=["docker", "compose"], decision="allow")
+prefix_rule(pattern=["curl"], decision="allow")
+prefix_rule(pattern=["gh", "label", "list"], decision="allow")
