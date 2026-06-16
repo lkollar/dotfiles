@@ -70,6 +70,22 @@ repo_matches() {
   return 1
 }
 
+matching_remote() {
+  local repo_path="$1"
+  local expect="$2"
+  local remote_name remote
+
+  for remote_name in origin upstream; do
+    remote="$(git -C "$repo_path" remote get-url "$remote_name" 2>/dev/null || true)"
+    if [[ -n "$remote" ]] && [[ "$(normalize_remote "$remote")" == "$expect" ]]; then
+      printf '%s\n' "$remote_name"
+      return 0
+    fi
+  done
+
+  return 1
+}
+
 candidate_repos() {
   local owner="$1"
   local repo="$2"
@@ -129,21 +145,28 @@ ensure_clone() {
 
 default_branch() {
   local repo_path="$1"
-  local ref
+  local remote_name="${2:-origin}"
+  local ref remote_head
 
-  ref="$(git -C "$repo_path" symbolic-ref refs/remotes/origin/HEAD 2>/dev/null || true)"
+  ref="$(git -C "$repo_path" symbolic-ref "refs/remotes/${remote_name}/HEAD" 2>/dev/null || true)"
   if [[ -n "$ref" ]]; then
-    printf '%s\n' "${ref#refs/remotes/origin/}"
+    printf '%s\n' "${ref#refs/remotes/${remote_name}/}"
     return 0
   fi
 
-  if git -C "$repo_path" rev-parse --verify refs/remotes/origin/main >/dev/null 2>&1; then
+  if git -C "$repo_path" rev-parse --verify "refs/remotes/${remote_name}/main" >/dev/null 2>&1; then
     printf 'main\n'
     return 0
   fi
 
-  if git -C "$repo_path" rev-parse --verify refs/remotes/origin/master >/dev/null 2>&1; then
+  if git -C "$repo_path" rev-parse --verify "refs/remotes/${remote_name}/master" >/dev/null 2>&1; then
     printf 'master\n'
+    return 0
+  fi
+
+  remote_head="$(git -C "$repo_path" ls-remote --symref "$remote_name" HEAD 2>/dev/null | sed -n 's#^ref: refs/heads/\([^[:space:]]*\)[[:space:]]*HEAD$#\1#p' | head -n1)"
+  if [[ -n "$remote_head" ]]; then
+    printf '%s\n' "$remote_head"
     return 0
   fi
 
@@ -154,12 +177,13 @@ prepare_review_checkout() {
   local repo_path="$1"
   local repo_name="$2"
   local pr_number="$3"
+  local remote_name="$4"
   local worktree_root="/tmp/pr-review-${repo_name}-${pr_number}/worktree"
-  local head_ref="refs/remotes/origin/pr/${pr_number}/head"
-  local merge_ref="refs/remotes/origin/pr/${pr_number}/merge"
+  local head_ref="refs/remotes/${remote_name}/pr/${pr_number}/head"
+  local merge_ref="refs/remotes/${remote_name}/pr/${pr_number}/merge"
   local chosen_ref diff_cmd review_hint base_branch
 
-  git -C "$repo_path" fetch origin \
+  git -C "$repo_path" fetch "$remote_name" \
     "+refs/pull/${pr_number}/head:${head_ref}" \
     "+refs/pull/${pr_number}/merge:${merge_ref}" >&2 || true
 
@@ -168,14 +192,14 @@ prepare_review_checkout() {
     diff_cmd="git diff HEAD^1 HEAD"
     review_hint="git diff HEAD^1 HEAD"
   else
-    git -C "$repo_path" fetch origin \
+    git -C "$repo_path" fetch "$remote_name" \
       "+refs/pull/${pr_number}/head:${head_ref}" >&2
     chosen_ref="$head_ref"
-    base_branch="$(default_branch "$repo_path")"
-    git -C "$repo_path" fetch origin \
-      "+refs/heads/${base_branch}:refs/remotes/origin/${base_branch}" >&2
-    diff_cmd="git diff origin/${base_branch}...HEAD"
-    review_hint="git diff origin/${base_branch}...HEAD"
+    base_branch="$(default_branch "$repo_path" "$remote_name")"
+    git -C "$repo_path" fetch "$remote_name" \
+      "+refs/heads/${base_branch}:refs/remotes/${remote_name}/${base_branch}" >&2
+    diff_cmd="git diff ${remote_name}/${base_branch}...HEAD"
+    review_hint="git diff ${remote_name}/${base_branch}...HEAD"
   fi
 
   mkdir -p "$(dirname "$worktree_root")"
@@ -220,9 +244,11 @@ main() {
   if ! repo_path="$(find_existing_repo "$REPO_OWNER" "$REPO_NAME" "$remote_key")"; then
     repo_path="$(ensure_clone "$remote_url" "$REPO_NAME" "$PR_NUMBER")"
   fi
+  local remote_name
+  remote_name="$(matching_remote "$repo_path" "$remote_key")" || die "no matching remote in $repo_path"
 
   local prepared
-  mapfile -t prepared < <(prepare_review_checkout "$repo_path" "$REPO_NAME" "$PR_NUMBER")
+  mapfile -t prepared < <(prepare_review_checkout "$repo_path" "$REPO_NAME" "$PR_NUMBER" "$remote_name")
 
   printf 'repo_host=%s\n' "$REPO_HOST"
   printf 'repo_owner=%s\n' "$REPO_OWNER"
