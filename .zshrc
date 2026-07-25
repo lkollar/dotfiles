@@ -96,30 +96,44 @@ export PATH=$PATH:$HOME/.cargo/bin
 
 ### zplug configuration ########################################################
 
-source ~/.zplug/init.zsh
-
-zplug "zsh-users/zsh-history-substring-search"
-zplug "zsh-users/zsh-autosuggestions"
-zplug "zsh-users/zsh-syntax-highlighting"
-zplug "zsh-users/zsh-completions"
-
-
-zplug "plugins/colored-man-pages",  from:oh-my-zsh
-zplug "plugins/git",                from:oh-my-zsh
-zplug "plugins/docker",             from:oh-my-zsh
-
-zplug "jeffreytse/zsh-vi-mode"
-
-# Install plugins if there are plugins that have not been installed
-if ! zplug check --verbose; then
-    printf "Install? [y/N]: "
-    if read -q; then
-        echo; zplug install
-    fi
+# NixOS installs zplug into the system profile. Other platforms retain the
+# user-managed installation created by the yadm bootstrap.
+if [[ -e /etc/NIXOS ]]; then
+    ZPLUG_INIT=/run/current-system/sw/share/zplug/init.zsh
+else
+    ZPLUG_INIT="$HOME/.zplug/init.zsh"
 fi
 
-# Then, source plugins and add commands to $PATH
-zplug load # --verbose
+if [[ -r "$ZPLUG_INIT" ]]; then
+    source "$ZPLUG_INIT"
+
+    zplug "zsh-users/zsh-history-substring-search"
+    zplug "zsh-users/zsh-autosuggestions"
+    zplug "zsh-users/zsh-syntax-highlighting"
+    zplug "zsh-users/zsh-completions"
+
+    zplug "plugins/colored-man-pages", from:oh-my-zsh
+    zplug "plugins/git", from:oh-my-zsh
+    zplug "plugins/docker", from:oh-my-zsh
+
+    zplug "jeffreytse/zsh-vi-mode"
+
+    # Install plugins if there are plugins that have not been installed.
+    if ! zplug check --verbose; then
+        printf "Install? [y/N]: "
+        if read -q; then
+            echo
+            zplug install
+        fi
+    fi
+
+    # Then, source plugins and add commands to $PATH.
+    zplug load # --verbose
+else
+    print -u2 "zplug is not installed; skipping zsh plugins"
+fi
+
+unset ZPLUG_INIT
 
 # Initialize starship prompt
 if command -v starship >/dev/null 2>&1; then
