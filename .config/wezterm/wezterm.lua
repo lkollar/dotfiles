@@ -1,6 +1,9 @@
 local wezterm = require 'wezterm'
 local config = wezterm.config_builder()
 
+-- Work around WezTerm Wayland crashes with GNOME HiDPI scaling.
+config.enable_wayland = false
+
 config.send_composed_key_when_left_alt_is_pressed = true
 
 config.color_scheme = 'Gruvbox Dark (Gogh)'
