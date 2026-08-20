@@ -21,6 +21,14 @@ ensure_zsh() {
     fi
 }
 
+ensure_codex() {
+    if [[ -x "$HOME/.local/bin/codex" ]]; then
+        echo "codex is already installed"
+    else
+        curl -fsSL https://chatgpt.com/codex/install.sh | sh
+    fi
+}
+
 # Configure YADM user just for YADM
 # https://yadm.io/docs/faq#usage
 yadm gitconfig "user.email" kiss.kollar.laszlo@gmail.com
@@ -142,6 +150,8 @@ if grep -q "^ID=fedora$" /etc/os-release; then
     ensure_pew
     ensure_zsh
 fi
+
+ensure_codex
 
 ZPLUG_HOME=~/.zplug
 if [[ -e "$ZPLUG_HOME" ]]; then
