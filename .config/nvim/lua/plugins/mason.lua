@@ -6,6 +6,8 @@ return {
 
       if vim.fn.filereadable("/etc/NIXOS") == 0 then
         table.insert(opts.ensure_installed, "ruff")
+      else
+        opts.PATH = "append"
       end
     end,
   },
