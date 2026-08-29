@@ -4,24 +4,10 @@
     "allow": [
       "WebFetch(domain:docs.anthropic.com)",
       "Bash(ls:*)",
-      "Bash(~/.local/bin/agent_notifier:*)",
       "Bash(log:*)",
       "Read(~/Documents/Notes/**/*)",
       "Glob(~/Documents/Notes/**/*)",
       "Grep(~/Documents/Notes/**/*)"
-    ]
-  },
-  "hooks": {
-    "Notification": [
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "~/.local/bin/agent_notifier"
-          }
-        ]
-      }
     ]
   },
   "statusLine": {
@@ -29,11 +15,10 @@
     "command": "npx -y @owloops/claude-powerline@latest --style=powerline"
   },
   "enabledPlugins": {
+    "clangd-lsp@claude-plugins-official": true,
     "frontend-design@claude-code-plugins": true,
     "pyright-lsp@claude-plugins-official": true,
-    "rust-analyzer-lsp@claude-plugins-official": true,
-    "clangd-lsp@claude-plugins-official": true,
-    "context7@claude-plugins-official": true
+    "rust-analyzer-lsp@claude-plugins-official": true
   },
   "alwaysThinkingEnabled": true
 }
