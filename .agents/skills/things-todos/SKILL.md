@@ -1,7 +1,8 @@
 ---
 name: things-todos
 description: Manage the user's Things 3 to-dos, projects, areas, tags, Today/Inbox/Anytime/Someday lists, deadlines, scheduling, completion, cancellation, and deletion on macOS via AppleScript. Use when the user asks to create, list, update, move, schedule, complete, cancel, delete, or inspect Things tasks.
-version: 3.0.0
+metadata:
+  version: "3.0.0"
 ---
 
 # Things Todos
@@ -139,4 +140,3 @@ tell application "Things3"
 end tell
 APPLESCRIPT
 ```
-

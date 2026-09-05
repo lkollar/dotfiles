@@ -1,0 +1,6 @@
+interface:
+  display_name: "LLM Wiki"
+  short_description: "Maintain a layered personal knowledge wiki"
+  default_prompt: "Use $llm-wiki to set up or maintain this knowledge vault."
+policy:
+  allow_implicit_invocation: false
