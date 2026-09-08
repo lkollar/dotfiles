@@ -1,0 +1,50 @@
+# Appearance
+theme = Gruvbox Dark Hard
+font-family = JetBrains Mono NL
+font-size = 15
+
+# Boost legibility of too-faint text against its background
+minimum-contrast = 2
+
+# Hide titlebar (wezterm: window_decorations = "RESIZE")
+macos-titlebar-style = native
+
+# Dim inactive panes (wezterm: inactive_pane_hsb)
+unfocused-split-opacity = 0.8
+
+# Left Option acts as terminal Alt
+macos-option-as-alt = left
+
+# Selecting text copies straight to the system clipboard
+copy-on-select = clipboard
+
+# --- Keybinds ---
+
+# Splits (wezterm: | = side-by-side, _ = stacked)
+keybind = cmd+shift+\=new_split:right
+keybind = cmd+shift+-=new_split:down
+
+# Pane navigation (vim hjkl)
+keybind = cmd+h=goto_split:left
+keybind = cmd+j=goto_split:bottom
+keybind = cmd+k=goto_split:top
+keybind = cmd+l=goto_split:right
+
+# Pane management
+keybind = cmd+w=close_surface
+keybind = cmd+z=toggle_split_zoom
+keybind = cmd+shift+enter=toggle_split_zoom
+
+# Pane resizing
+keybind = cmd+shift+h=resize_split:left,20
+keybind = cmd+shift+j=resize_split:down,20
+keybind = cmd+shift+k=resize_split:up,20
+keybind = cmd+shift+l=resize_split:right,20
+
+# Tab navigation
+keybind = cmd+shift+[=previous_tab
+keybind = cmd+shift+]=next_tab
+
+# Claude Code line break support (shift+enter -> esc + CR)
+keybind = shift+enter=text:\x1b\r
+
