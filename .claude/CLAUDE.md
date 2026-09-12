@@ -1,14 +1,6 @@
 - In all interactions and commit messages, be extremely concise and sacrifice
 grammar for the sake of concision.
 
-## Notifications
-
-After making a set of changes to files or satisfying a task, you MUST display a notification to tell me what's been done. Use a brief descriptive message. Here's an example:
-
-```bash
-echo '{"message":"Refactored FooBar class into smaller methods"}' | ~/.local/bin/claude_notifier
-```
-
 ## Plans
 - At the end of each plan, give me a list of unresolved questions to answer, if
 any. Make the questions extremely concise. Sacrifice grammar for the sake of
