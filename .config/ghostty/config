@@ -20,15 +20,15 @@ copy-on-select = clipboard
 
 # --- Keybinds ---
 
-# Splits (wezterm: | = side-by-side, _ = stacked)
-keybind = cmd+shift+\=new_split:right
-keybind = cmd+shift+-=new_split:down
+# HerdR panes: | = side-by-side, - = stacked
+keybind = cmd+shift+\=text:\x1bv
+keybind = cmd+-=text:\x1b-
 
-# Pane navigation (vim hjkl)
-keybind = cmd+h=unbind
-keybind = cmd+j=unbind
-keybind = cmd+k=unbind
-keybind = cmd+l=unbind
+# Pane navigation (vim hjkl). Text actions intercept macOS Cmd+H.
+keybind = cmd+h=text:\x1bh
+keybind = cmd+j=text:\x1bj
+keybind = cmd+k=text:\x1bk
+keybind = cmd+l=text:\x1bl
 
 # Pane management
 keybind = cmd+w=unbind

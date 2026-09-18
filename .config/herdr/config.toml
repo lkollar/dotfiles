@@ -21,13 +21,13 @@ resize_mode = "prefix+shift+r"
 new_tab = ["prefix+c", "cmd+t"]
 close_pane = ["prefix+x", "cmd+w"]
 
-split_vertical = ["prefix+|", "cmd+d"]
-split_horizontal = ["prefix+minus", "cmd+shift+d"]
+split_vertical = ["prefix+|", "cmd+d", "alt+v"]
+split_horizontal = ["prefix+minus", "cmd+shift+d", "alt+minus"]
 
-focus_pane_left = ["prefix+h", "ctrl+alt+h", "cmd+h"]
-focus_pane_down = ["prefix+j", "ctrl+alt+j", "cmd+j"]
-focus_pane_up = ["prefix+k", "ctrl+alt+k", "cmd+k"]
-focus_pane_right = ["prefix+l", "ctrl+alt+l", "cmd+l"]
+focus_pane_left = ["prefix+h", "ctrl+alt+h", "alt+h"]
+focus_pane_down = ["prefix+j", "ctrl+alt+j", "alt+j"]
+focus_pane_up = ["prefix+k", "ctrl+alt+k", "alt+k"]
+focus_pane_right = ["prefix+l", "ctrl+alt+l", "alt+l"]
 
 cycle_pane_previous = "prefix+shift+tab"
 cycle_pane_next = "prefix+tab"
