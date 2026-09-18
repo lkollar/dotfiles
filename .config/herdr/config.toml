@@ -1,0 +1,56 @@
+onboarding = false
+[ui]
+agent_panel_sort = "spaces"
+
+[theme]
+name = "gruvbox"
+auto_switch = false
+
+[ui.sound]
+enabled = false
+
+[ui.toast]
+delivery = "herdr"
+
+[keys]
+prefix = "ctrl+a"
+copy_mode = ["prefix+[", "f1"]
+reload_config = "prefix+r"
+resize_mode = "prefix+shift+r"
+
+new_tab = ["prefix+c", "cmd+t"]
+close_pane = ["prefix+x", "cmd+w"]
+
+split_vertical = ["prefix+|", "cmd+d"]
+split_horizontal = ["prefix+minus", "cmd+shift+d"]
+
+focus_pane_left = ["prefix+h", "ctrl+alt+h", "cmd+h"]
+focus_pane_down = ["prefix+j", "ctrl+alt+j", "cmd+j"]
+focus_pane_up = ["prefix+k", "ctrl+alt+k", "cmd+k"]
+focus_pane_right = ["prefix+l", "ctrl+alt+l", "cmd+l"]
+
+cycle_pane_previous = "prefix+shift+tab"
+cycle_pane_next = "prefix+tab"
+
+previous_tab = ["prefix+p", "cmd+["]
+next_tab = ["prefix+n", "cmd+]"]
+switch_tab = ["prefix+1..9", "alt+1..9"]
+
+previous_agent = ["prefix+shift+k", "cmd+alt+k"]
+next_agent = ["prefix+shift+j", "cmd+alt+j"]
+focus_agent = "cmd+alt+1..9"
+
+switch_workspace = ["prefix+shift+1..9", "cmd+1..9"]
+previous_workspace = ["prefix+{", "cmd+shift+["]
+next_workspace = ["prefix+}", "cmd+shift+]"]
+
+zoom = ["prefix+z", "cmd+z", "cmd+shift+enter"]
+
+resize_pane_left = ["ctrl+alt+shift+h", "cmd+shift+h"]
+resize_pane_down = ["ctrl+alt+shift+j", "cmd+shift+j"]
+resize_pane_up = ["ctrl+alt+shift+k", "cmd+shift+k"]
+resize_pane_right = ["ctrl+alt+shift+l", "cmd+shift+l"]
+
+detach = "prefix+d"
+navigate_workspace_up = "k"
+navigate_workspace_down = "j"
