@@ -32,8 +32,8 @@ focus_pane_right = ["prefix+l", "ctrl+alt+l", "cmd+l"]
 cycle_pane_previous = "prefix+shift+tab"
 cycle_pane_next = "prefix+tab"
 
-previous_tab = ["prefix+p", "cmd+["]
-next_tab = ["prefix+n", "cmd+]"]
+previous_tab = ["prefix+p", "cmd+shift+["]
+next_tab = ["prefix+n", "cmd+shift+]"]
 switch_tab = ["prefix+1..9", "alt+1..9"]
 
 previous_agent = ["prefix+shift+k", "cmd+alt+k"]
@@ -41,8 +41,8 @@ next_agent = ["prefix+shift+j", "cmd+alt+j"]
 focus_agent = "cmd+alt+1..9"
 
 switch_workspace = ["prefix+shift+1..9", "cmd+1..9"]
-previous_workspace = ["prefix+{", "cmd+shift+["]
-next_workspace = ["prefix+}", "cmd+shift+]"]
+previous_workspace = ["prefix+{", "cmd+["]
+next_workspace = ["prefix+}", "cmd+]"]
 
 zoom = ["prefix+z", "cmd+z", "cmd+shift+enter"]
 
