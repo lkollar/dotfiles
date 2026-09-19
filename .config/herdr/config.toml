@@ -45,6 +45,7 @@ previous_workspace = ["prefix+{", "cmd+["]
 next_workspace = ["prefix+}", "cmd+]"]
 
 zoom = ["prefix+z", "cmd+z", "cmd+shift+enter"]
+toggle_sidebar = ["prefix+b", "cmd+b"]
 
 resize_pane_left = ["ctrl+alt+shift+h", "cmd+shift+h"]
 resize_pane_down = ["ctrl+alt+shift+j", "cmd+shift+j"]
