@@ -7,7 +7,7 @@ name = "gruvbox"
 auto_switch = false
 
 [ui.sound]
-enabled = false
+enabled = true
 
 [ui.toast]
 delivery = "herdr"
