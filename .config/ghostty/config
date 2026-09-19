@@ -20,6 +20,10 @@ copy-on-select = clipboard
 
 # --- Keybinds ---
 
+# Preserve UK # while left Option handles terminal Alt
+keybind = alt+3=text:#
+keybind = alt+digit_3=text:#
+
 # HerdR panes: | = side-by-side, - = stacked
 keybind = cmd+shift+\=text:\x1bv
 keybind = cmd+-=text:\x1b-
