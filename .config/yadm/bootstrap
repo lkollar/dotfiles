@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # vi: ft=sh
 
 script_dir=$(dirname "$0")
@@ -15,14 +15,14 @@ ensure_pew() {
 ensure_zsh() {
     if [[ $SHELL != *zsh ]]; then
         echo "Changing shell to ZSH"
-        chsh -s /usr/bin/zsh
+        chsh -s "$(command -v zsh)"
     else
         echo "Shell is already ZSH"
     fi
 }
 
 ensure_codex() {
-    if [[ -x "$HOME/.local/bin/codex" ]]; then
+    if command -v codex >/dev/null 2>&1; then
         echo "codex is already installed"
     else
         curl -fsSL https://chatgpt.com/codex/install.sh | sh
@@ -151,17 +151,26 @@ if grep -q "^ID=fedora$" /etc/os-release; then
     ensure_zsh
 fi
 
-ensure_codex
-
-ZPLUG_HOME=~/.zplug
-if [[ -e "$ZPLUG_HOME" ]]; then
-    echo "zplug already installed"
-else
-    echo "Installing zplug"
-    git clone https://github.com/zplug/zplug "$ZPLUG_HOME"
+if [[ -e /etc/NIXOS ]]; then
+    echo "Detected NixOS; system packages are managed by nixos-config"
+    ensure_zsh
 fi
 
-if [[ ! -e ~/.tmux/plugins/tpm ]]; then
-    git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
-    cd ~/.tmux/plugins/tpm/scripts && ./install_plugins.sh
+ensure_codex
+
+if [[ -e /etc/NIXOS ]]; then
+    echo "Zplug itself and tmux plugins are managed by NixOS"
+else
+    ZPLUG_HOME=~/.zplug
+    if [[ -e "$ZPLUG_HOME" ]]; then
+        echo "zplug already installed"
+    else
+        echo "Installing zplug"
+        git clone https://github.com/zplug/zplug "$ZPLUG_HOME"
+    fi
+
+    if [[ ! -e ~/.tmux/plugins/tpm ]]; then
+        git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+        cd ~/.tmux/plugins/tpm/scripts && ./install_plugins.sh
+    fi
 fi
