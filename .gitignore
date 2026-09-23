@@ -25,3 +25,6 @@ test-reports/
 .nox
 
 .venv
+
+# Herdr runtime lock
+.config/herdr/.plugins.lock
