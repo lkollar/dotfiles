@@ -1,5 +1,5 @@
 {
-  "lastChangelogVersion": "0.79.3",
+  "lastChangelogVersion": "0.85.1",
   "defaultProvider": "opencode-go",
   "defaultModel": "deepseek-v4-pro",
   "defaultThinkingLevel": "high",
@@ -7,5 +7,6 @@
   "packages": [
     "git:github.com/obra/superpowers@dev",
     "git:github.com/lmilojevicc/pi-zentui"
-  ]
+  ],
+  "theme": "dark"
 }
