@@ -1,5 +1,12 @@
 - In all interactions + commit messages: be extremely concise. Sacrifice grammar for concision.
 
+## Tool output
+
+- Scope searches: filenames first, then relevant line ranges.
+- Save long test output to a local log. Return path, exit code, and a bounded failure excerpt.
+- Print only needed fields from tool results. Never dump whole result objects or tool catalogs.
+- If output truncates, narrow the query and reread before concluding.
+
 ## Plans
 
 - End each plan with unresolved questions list (if any).
