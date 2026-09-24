@@ -28,3 +28,6 @@ test-reports/
 
 # Herdr runtime lock
 .config/herdr/.plugins.lock
+
+# Local SSH hosts
+/.ssh/config.local
