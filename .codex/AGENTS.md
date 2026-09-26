@@ -7,6 +7,13 @@
 - Print only needed fields from tool results. Never dump whole result objects or tool catalogs.
 - If output truncates, narrow the query and reread before concluding.
 
+## Patching
+
+- Read the current target hunk before patching; use small, unique anchors.
+- After rejection, reread affected lines and regenerate. Never retry unchanged.
+- Check target paths; distinguish new files from existing files.
+- During parallel work, assign one editor per file; serialize shared docs.
+
 ## Plans
 
 - End each plan with unresolved questions list (if any).
