@@ -24,9 +24,9 @@ copy-on-select = clipboard
 keybind = alt+3=text:#
 keybind = alt+digit_3=text:#
 
-# HerdR panes: | = side-by-side, - = stacked
+# HerdR panes: Shift-minus = stacked, Shift-backslash = side-by-side
+keybind = cmd+shift+-=text:\x1b-
 keybind = cmd+shift+\=text:\x1bv
-keybind = cmd+-=text:\x1b-
 
 # Pane navigation (vim hjkl). Text actions intercept macOS Cmd+H.
 keybind = cmd+h=text:\x1bh

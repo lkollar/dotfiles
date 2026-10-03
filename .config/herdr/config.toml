@@ -21,8 +21,8 @@ resize_mode = "prefix+shift+r"
 new_tab = ["prefix+c", "cmd+t"]
 close_pane = ["prefix+x", "cmd+w"]
 
-split_vertical = ["prefix+|", "cmd+d", "alt+v"]
-split_horizontal = ["prefix+minus", "cmd+shift+d", "alt+minus"]
+split_vertical = ["prefix+|", "alt+v"]
+split_horizontal = ["alt+minus"]
 
 focus_pane_left = ["prefix+h", "ctrl+alt+h", "alt+h"]
 focus_pane_down = ["prefix+j", "ctrl+alt+j", "alt+j"]
