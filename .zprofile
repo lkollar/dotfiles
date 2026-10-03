@@ -1,0 +1,11 @@
+# Add .NET Core SDK tools
+export PATH="$PATH:/Users/lkollar/.dotnet/tools"
+
+# Added by OrbStack: command-line tools and integration
+# This won't be added again if you remove it.
+source ~/.orbstack/shell/init.zsh 2>/dev/null || :
+
+
+# Added by Antigravity CLI installer
+export PATH="/Users/lkollar/.local/bin:$PATH"
+path=( ${path:#/usr/local/bin} )

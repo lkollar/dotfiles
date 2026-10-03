@@ -148,5 +148,7 @@ if [ -f ~/.env ]; then
     source ~/.env
 fi
 
+path=( ${path:#/usr/local/bin} )
+
 ### profilng ###################################################################
 # zprof
