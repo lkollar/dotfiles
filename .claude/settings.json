@@ -8,6 +8,7 @@
       "Read(~/Documents/Notes/**/*)"
     ]
   },
+  "model": "sonnet",
   "statusLine": {
     "type": "command",
     "command": "~/.claude/statusline.sh",
@@ -21,7 +22,14 @@
   },
   "extraKnownMarketplaces": {},
   "alwaysThinkingEnabled": true,
+  "modelSettings": {
+    "claude-sonnet-5": {
+      "effortLevel": "medium"
+    }
+  },
   "tui": "fullscreen",
+  "theme": "dark",
+  "verbose": false,
   "showThinkingSummaries": true,
   "agentPushNotifEnabled": true,
   "remoteControlAtStartup": true
