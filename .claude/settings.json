@@ -12,7 +12,8 @@
   },
   "statusLine": {
     "type": "command",
-    "command": "npx -y @owloops/claude-powerline@latest --style=powerline"
+    "command": "~/.claude/statusline.sh",
+    "refreshInterval": 60
   },
   "enabledPlugins": {
     "clangd-lsp@claude-plugins-official": true,
@@ -20,5 +21,8 @@
     "pyright-lsp@claude-plugins-official": true,
     "rust-analyzer-lsp@claude-plugins-official": true
   },
-  "alwaysThinkingEnabled": true
+  "extraKnownMarketplaces": {},
+  "alwaysThinkingEnabled": true,
+  "tui": "fullscreen",
+  "showThinkingSummaries": true
 }
