@@ -49,6 +49,7 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
         gcc \
         gcc \
         git \
+        jq \
         luarocks \
         neovim \
         node \
@@ -70,7 +71,8 @@ if [ -f /etc/debian_version ]; then
         build-essential \
         curl \
         file \
-        gcc
+        gcc \
+        jq
 
     if grep -q "^ID=ubuntu" /etc/os-release; then
         sudo snap install --classic docker
@@ -99,6 +101,7 @@ if [ -f /etc/arch-release ]; then
         automake \
         fzf \
         gcc \
+        jq \
         keychain \
         luarocks \
         man-db \
@@ -130,6 +133,7 @@ if grep -q "^ID=fedora$" /etc/os-release; then
         gcc \
         gcc-c++ \
         git \
+        jq \
         luarocks \
         make \
         neovim \
