@@ -5,9 +5,7 @@
       "WebFetch(domain:docs.anthropic.com)",
       "Bash(ls:*)",
       "Bash(log:*)",
-      "Read(~/Documents/Notes/**/*)",
-      "Glob(~/Documents/Notes/**/*)",
-      "Grep(~/Documents/Notes/**/*)"
+      "Read(~/Documents/Notes/**/*)"
     ]
   },
   "statusLine": {
