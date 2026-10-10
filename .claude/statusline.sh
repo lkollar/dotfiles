@@ -43,7 +43,7 @@ out=$(c "205;133;63" "$short")
 [ -n "$tokens" ] && [ "$tokens" != "0" ] && out+="$sep$(c "0;255;255" "§ $tokens tokens")"
 
 if [ -n "$five_used" ]; then
-  free=$(printf '%.0f' "$(bc -l <<<"100 - $five_used")")
+  free=$(jq -n --argjson u "$five_used" '100 - $u | round')
   txt="◱ ${free}% free"
   if [ -n "$five_reset" ]; then
     t=$(LC_ALL=C date -r "$five_reset" '+%-I:%M%p' 2>/dev/null || LC_ALL=C date -d "@$five_reset" '+%-I:%M%p')
