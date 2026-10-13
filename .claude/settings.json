@@ -18,9 +18,17 @@
     "clangd-lsp@claude-plugins-official": true,
     "frontend-design@claude-code-plugins": true,
     "pyright-lsp@claude-plugins-official": true,
-    "rust-analyzer-lsp@claude-plugins-official": true
+    "rust-analyzer-lsp@claude-plugins-official": true,
+    "html-plan@claude-community": true
   },
-  "extraKnownMarketplaces": {},
+  "extraKnownMarketplaces": {
+    "claude-community": {
+      "source": {
+        "source": "github",
+        "repo": "anthropics/claude-plugins-community"
+      }
+    }
+  },
   "alwaysThinkingEnabled": true,
   "modelSettings": {
     "claude-sonnet-5": {
