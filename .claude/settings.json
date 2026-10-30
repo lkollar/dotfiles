@@ -1,5 +1,9 @@
 {
-  "includeCoAuthoredBy": false,
+  "attribution": {
+    "commit": "",
+    "pr": "",
+    "sessionUrl": false
+  },
   "permissions": {
     "allow": [
       "WebFetch(domain:docs.anthropic.com)",
