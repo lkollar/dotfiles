@@ -23,7 +23,8 @@
     "frontend-design@claude-code-plugins": true,
     "pyright-lsp@claude-plugins-official": true,
     "rust-analyzer-lsp@claude-plugins-official": true,
-    "html-plan@claude-community": true
+    "html-plan@claude-community": true,
+    "cc-plugin-you-should-know@builtin": true
   },
   "extraKnownMarketplaces": {
     "claude-community": {
