@@ -47,6 +47,6 @@
   "theme": "dark",
   "verbose": false,
   "showThinkingSummaries": true,
-  "agentPushNotifEnabled": true,
-  "remoteControlAtStartup": true
+  "remoteControlAtStartup": true,
+  "agentPushNotifEnabled": true
 }
