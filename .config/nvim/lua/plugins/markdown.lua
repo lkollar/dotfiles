@@ -13,6 +13,26 @@ return {
   {
     "MeanderingProgrammer/render-markdown.nvim",
     ft = { "markdown" },
-    opts = {},
+    opts = {
+      heading = {
+        sign = false,
+        width = "block",
+        left_pad = 1,
+        right_pad = 2,
+        border = true,
+      },
+      code = {
+        sign = false,
+        width = "block",
+        left_pad = 2,
+        right_pad = 4,
+      },
+      pipe_table = {
+        preset = "round",
+        cell = "trimmed",
+      },
+      latex = { enabled = false },
+      bullet = { icons = { "•", "◦", "▸", "▹" } },
+    },
   },
 }
