@@ -16,6 +16,33 @@ AppleScript can't do — clearing a deadline, appending tags/notes, checklist
 items, natural-language dates — route through the Things URL scheme, which needs
 a one-time auth token (see Auth token below).
 
+## Writing good todos (GTD)
+
+Follow David Allen's *Getting Things Done*. A todo is a **next action**:
+the very next physical, visible step, clear enough that the user could do
+it cold, with no memory of this conversation.
+
+- **Start with a concrete verb** the user performs: Run, Write, Email,
+  Compare, Read, Pick. Not "Decide", "Look into", "Explore", "Handle",
+  "Consider", "Optimise" — those hide the actual step. If you must capture
+  a decision, name the options and what unblocks it ("Pick between X and Y
+  for Z").
+- **Say what and where.** Include the object and enough context to act:
+  "Check that Codex re-runs `folio wait` after a timeout", not "Run
+  interaction experiments".
+- **No jargon or internal IDs** (T1–T10, §6, "the plan"). Spell it out, or
+  put the reference in notes.
+- **One action per todo.** If it takes several steps, it's a *project*:
+  name the finished outcome ("Folio published on PyPI") and list only
+  the next actions inside it.
+- **Notes hold context**, not the title: why, numbers, file paths, links.
+- **Only add what the user will really do soon.** Ideas, deferred and
+  "maybe" items belong in the source doc, or Someday — not the active list.
+
+**Never bulk-create.** Propose the list in chat first (aim for ≤5 items,
+most important only) and create after the user confirms. A single explicit
+request ("add a todo to X") needs no confirmation.
+
 ## CLI (preferred)
 
 The skill ships a self-contained `uv` script (`things`) which should be on
