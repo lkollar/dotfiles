@@ -10,7 +10,9 @@ Subject: `<tool>: <Change>`
 - `<tool>` = app/config the change touches, lowercase: `zsh`, `nvim`,
   `claude`, `codex`, `herdr`, `ghostty`, `agents`, `yadm`, ... Reuse an existing
   prefix: `yadm log --format=%s | grep -o '^[a-z-]*:' | sort -u`.
-- Change touches several tools: no prefix, plain imperative subject.
+- Change touches several tools: no prefix, plain imperative subject. Exception:
+  if the other tools' edits only support one tool (e.g. ghostty unbinds for
+  herdr keys), use that tool's prefix.
 - Whole subject <= 50 chars, prefix included. Imperative mood, capital after
   the colon, no trailing period.
 - Body (optional): wrap at 72, explain why, not what. Don't list changes.
