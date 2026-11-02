@@ -19,7 +19,8 @@ reload_config = "prefix+r"
 resize_mode = "prefix+shift+r"
 
 new_tab = ["prefix+c", "cmd+t"]
-close_pane = ["prefix+x", "cmd+w"]
+close_tab = "cmd+w"
+close_pane = ["prefix+x", "cmd+shift+w"]
 
 split_vertical = ["prefix+|", "alt+v"]
 split_horizontal = ["alt+minus"]
@@ -34,15 +35,18 @@ cycle_pane_next = "prefix+tab"
 
 previous_tab = ["prefix+p", "cmd+shift+["]
 next_tab = ["prefix+n", "cmd+shift+]"]
-switch_tab = ["prefix+1..9", "alt+1..9"]
+switch_tab = ["prefix+1..9", "cmd+1..9", "alt+1..9"]
 
-previous_agent = ["prefix+shift+k", "cmd+alt+k"]
-next_agent = ["prefix+shift+j", "cmd+alt+j"]
+previous_agent = ["prefix+shift+k", "cmd+[", "cmd+alt+k"]
+next_agent = ["prefix+shift+j", "cmd+]", "cmd+alt+j"]
 focus_agent = "cmd+alt+1..9"
 
-switch_workspace = ["prefix+shift+1..9", "cmd+1..9"]
-previous_workspace = ["prefix+{", "cmd+["]
-next_workspace = ["prefix+}", "cmd+]"]
+switch_workspace = ["prefix+shift+1..9", "ctrl+1..9"]
+previous_workspace = ["prefix+{", "cmd+alt+["]
+next_workspace = ["prefix+}", "cmd+alt+]"]
+new_workspace = "cmd+n"
+rename_workspace = "shift+f2"
+rename_tab = "f2"
 
 zoom = ["prefix+z", "cmd+z", "cmd+shift+enter"]
 toggle_sidebar = ["prefix+b", "cmd+b"]
@@ -51,6 +55,11 @@ resize_pane_left = ["ctrl+alt+shift+h", "cmd+shift+h"]
 resize_pane_down = ["ctrl+alt+shift+j", "cmd+shift+j"]
 resize_pane_up = ["ctrl+alt+shift+k", "cmd+shift+k"]
 resize_pane_right = ["ctrl+alt+shift+l", "cmd+shift+l"]
+
+swap_pane_left = "cmd+alt+shift+left"
+swap_pane_down = "cmd+alt+shift+down"
+swap_pane_up = "cmd+alt+shift+up"
+swap_pane_right = "cmd+alt+shift+right"
 
 detach = "prefix+d"
 navigate_workspace_up = "k"

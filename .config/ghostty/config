@@ -37,6 +37,12 @@ keybind = cmd+l=text:\x1bl
 # Pane management
 keybind = cmd+b=unbind
 keybind = cmd+w=unbind
+keybind = cmd+shift+w=unbind
+keybind = cmd+n=unbind
+keybind = cmd+alt+shift+left=unbind
+keybind = cmd+alt+shift+right=unbind
+keybind = cmd+alt+shift+up=unbind
+keybind = cmd+alt+shift+down=unbind
 keybind = cmd+z=unbind
 keybind = cmd+shift+enter=unbind
 
