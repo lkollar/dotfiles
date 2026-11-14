@@ -5,7 +5,6 @@
   "defaultThinkingLevel": "high",
   "hideThinkingBlock": false,
   "packages": [
-    "git:github.com/obra/superpowers@dev",
     "git:github.com/lmilojevicc/pi-zentui"
   ],
   "theme": "dark"
