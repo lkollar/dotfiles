@@ -1,11 +1,38 @@
 {
-  "lastChangelogVersion": "1.1.0",
-  "defaultProvider": "opencode-go",
-  "defaultModel": "deepseek-v4-pro",
+  "lastChangelogVersion": "1.5.2",
+  "defaultProvider": "openai-codex",
+  "defaultModel": "gpt-6.1-sol",
   "defaultThinkingLevel": "high",
   "hideThinkingBlock": false,
   "packages": [
-    "git:github.com/lmilojevicc/pi-zentui"
+    "git:github.com/lmilojevicc/pi-zentui",
+    {
+      "source": "npm:pi-subagents",
+      "prompts": [],
+      "skills": ["!council-mode"]
+    }
   ],
-  "theme": "dark"
+  "theme": "dark",
+  "subagents": {
+    "disableBuiltins": true,
+    "defaultExtensions": [],
+    "agentOverrides": {
+      "lookup": {
+        "model": "openai-codex/gpt-6-luna",
+        "thinking": "low"
+      },
+      "reviewer": { "model": "inherit" },
+      "worker": { "model": "inherit" }
+    },
+    "watchdog": {
+      "enabled": false,
+      "children": { "enabled": false }
+    }
+  },
+  "enabledModels": [
+    "openai-codex/gpt-6-astra",
+    "openai-codex/gpt-6.1-sol",
+    "openai-codex/gpt-6.1-terra",
+    "openai-codex/gpt-6-luna"
+  ]
 }

@@ -1,0 +1,43 @@
+{
+  "toolActivation": "dynamic",
+  "toolDescriptionMode": "compact",
+  "disabledFeatures": [
+    "agent-management",
+    "watchdog",
+    "panes",
+    "missions",
+    "spawn-budget-grants",
+    "preflight",
+    "lane-metadata",
+    "usage-budgets",
+    "tool-budgets",
+    "control-overrides",
+    "extension-bindings",
+    "external-machines"
+  ],
+  "asyncByDefault": true,
+  "autoResume": false,
+  "defaultSubagentContext": "fresh",
+  "globalConcurrencyLimit": 3,
+  "parallel": {
+    "maxTasks": 8,
+    "concurrency": 3
+  },
+  "maxActiveAsyncRunsPerSession": 3,
+  "maxSubagentDepth": 1,
+  "scheduledRuns": { "enabled": false },
+  "missions": { "enabled": false },
+  "orcaProgressTabs": { "enabled": false },
+  "inlineToolDisplay": "summary",
+  "fleetView": true,
+  "asyncWidget": false,
+  "artifactDir": "session",
+  "worktreeProvider": "native",
+  "worktreeBaseDir": "~/.pi/agent/worktrees",
+  "authorityPolicy": {
+    "discardWorktree": "confirm",
+    "destructiveCleanup": "confirm",
+    "scheduleCreate": "forbid",
+    "projectOpen": "forbid"
+  }
+}
