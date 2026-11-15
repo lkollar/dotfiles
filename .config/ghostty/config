@@ -83,5 +83,5 @@ keybind = cmd+digit_8=unbind
 keybind = cmd+9=unbind
 keybind = cmd+digit_9=unbind
 
-# Claude Code line break support (shift+enter -> esc + CR)
-keybind = shift+enter=text:\x1b\r
+# Report Shift+Enter explicitly; Escape + Return is Alt+Enter in Pi.
+keybind = shift+enter=text:\x1b[13;2u
