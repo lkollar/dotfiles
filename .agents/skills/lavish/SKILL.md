@@ -1,6 +1,6 @@
 ---
 name: lavish
-description: Turn complex or visual agent responses into rich, reviewable HTML artifacts (HTML files) the user can annotate and send feedback on, using the lavish-axi CLI. Use when about to give a plan, comparison, diagram, table, code diff, report, or anything easier to grasp visually than as prose.
+description: Create reviewable HTML artifacts with the lavish-axi CLI only when the user explicitly invokes $lavish, /lavish, or asks to use Lavish. Do not activate automatically for plans, comparisons, diagrams, reports, or visual work.
 license: MIT
 metadata:
   author: Kun Chen (kunchenguid)
@@ -12,7 +12,7 @@ metadata:
 # Lavish Editor
 
 Lavish Editor opens agent-generated HTML in the browser so a human can annotate it and send feedback back to the agent.
-Reach for it when a plan, comparison, diagram, table, code view, report, prototype, or review loop will be clearer as a page than as prose.
+Use only when the user explicitly requests Lavish. A request for a plan, comparison, diagram, report, HTML artifact, or visual review does not by itself activate this skill.
 
 ## Current guidance lives in the CLI
 
@@ -30,5 +30,4 @@ If lavish-axi output shows a follow-up command starting with `lavish-axi`, run i
 
 $ARGUMENTS
 
-If the request above is non-empty, the user invoked `/lavish` explicitly - fetch the current CLI guidance, then build that artifact as an HTML file.
-If it is empty, infer what to visualize from the conversation.
+Proceed only after an explicit user invocation of `$lavish`, `/lavish`, or a request to use Lavish. Otherwise, do not run the CLI, open a review session, or poll for feedback. An empty request is not permission to infer a Lavish task.
