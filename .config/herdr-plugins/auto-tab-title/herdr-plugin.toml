@@ -1,0 +1,50 @@
+id = "lkk.auto-tab-title"
+name = "Auto tab title"
+version = "0.1.0"
+min_herdr_version = "0.9.0"
+description = "Name default tabs after the agent's task and report it as the $task sidebar token"
+platforms = ["linux", "macos"]
+
+# Pane metadata is not restored after a server restart: re-report everything.
+[[startup]]
+command = ["uv", "run", "--quiet", "--no-project", "auto_tab_title.py", "prune"]
+
+[[events]]
+on = "pane.agent_status_changed"
+command = ["uv", "run", "--quiet", "--no-project", "auto_tab_title.py", "pane"]
+
+[[events]]
+on = "pane.agent_detected"
+command = ["uv", "run", "--quiet", "--no-project", "auto_tab_title.py", "pane"]
+
+[[events]]
+on = "pane.moved"
+command = ["uv", "run", "--quiet", "--no-project", "auto_tab_title.py", "pane-moved"]
+
+[[events]]
+on = "tab.created"
+command = ["uv", "run", "--quiet", "--no-project", "auto_tab_title.py", "tabs-changed"]
+
+[[events]]
+on = "tab.closed"
+command = ["uv", "run", "--quiet", "--no-project", "auto_tab_title.py", "tabs-changed"]
+
+[[events]]
+on = "tab.moved"
+command = ["uv", "run", "--quiet", "--no-project", "auto_tab_title.py", "tabs-changed"]
+
+[[events]]
+on = "pane.closed"
+command = ["uv", "run", "--quiet", "--no-project", "auto_tab_title.py", "tabs-changed"]
+
+[[events]]
+on = "workspace.closed"
+command = ["uv", "run", "--quiet", "--no-project", "auto_tab_title.py", "tabs-changed"]
+
+# Invoked by ~/.claude/hooks/herdr-tab-title-refresh.sh on SessionStart:
+# /clear or /resume on an idle pane emits no hookable event.
+[[actions]]
+id = "refresh"
+title = "Refresh agent tab titles"
+contexts = ["workspace"]
+command = ["uv", "run", "--quiet", "--no-project", "auto_tab_title.py", "all"]

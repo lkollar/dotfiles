@@ -2,6 +2,18 @@ onboarding = false
 [ui]
 agent_panel_sort = "spaces"
 
+# $task comes from the lkk.auto-tab-title plugin. Hide the tab label when
+# the plugin named it (U+2060 marker): $task already shows that title.
+[ui.sidebar.agents]
+rows = [
+  ["state_icon", { token = "$task", bold = true }],
+  [
+    { token = "workspace", bold = false, dim = true },
+    { token = "tab", rules = [{ contains = "\u2060", hide = true }] },
+  ],
+  [{ token = "machine", dim = true }],
+]
+
 [theme]
 name = "gruvbox"
 auto_switch = false
