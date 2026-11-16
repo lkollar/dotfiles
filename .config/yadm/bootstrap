@@ -178,3 +178,5 @@ else
         cd ~/.tmux/plugins/tpm/scripts && ./install_plugins.sh
     fi
 fi
+
+"${script_dir}/herdr-plugins-link.sh" || true

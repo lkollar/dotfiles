@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+"$HOME/.config/yadm/herdr-plugins-link.sh" || true
