@@ -46,10 +46,6 @@
     oldHighlight = red bold 52
     newNormal = green bold
     newHighlight = green bold 22
-
-[url "git://github.com/"]
-    insteadOf = gh://
-
 [include]
     path = ~/.gitconfig.local
 
@@ -64,3 +60,13 @@
 
 [includeIf "gitdir:~/github/"]
     path = "~/.gitconfig.local##u.lkollar"
+[credential "https://github.com"]
+	helper = 
+	helper = !gh auth git-credential
+[credential "https://gist.github.com"]
+	helper = 
+	helper = !gh auth git-credential
+[url "https://github.com/"]
+	insteadOf = git@github.com:
+	insteadOf = ssh://git@github.com/
+	insteadOf = gh://
