@@ -73,7 +73,8 @@ if [ -f /etc/debian_version ]; then
         curl \
         file \
         gcc \
-        jq
+        jq \
+        pipx
 
     if grep -q "^ID=ubuntu" /etc/os-release; then
         sudo snap install --classic docker
@@ -89,6 +90,9 @@ if [ -f /etc/debian_version ]; then
 
     # Ensure "nvim" is available alongside the "neovim" binary
     ln -sf "$local_bin/neovim" "$local_bin/nvim"
+    if ! PATH="$PATH:$local_bin" command -v uv >/dev/null 2>&1; then
+        pipx install uv
+    fi
 
     ensure_pew
     ensure_zsh
@@ -162,6 +166,7 @@ if [[ -e /etc/NIXOS ]]; then
 fi
 
 ensure_codex
+PATH="$PATH:$HOME/.local/bin" uv run --script "$script_dir/codex-config-sync.py" || true
 
 if [[ -e /etc/NIXOS ]]; then
     echo "Zplug itself and tmux plugins are managed by NixOS"

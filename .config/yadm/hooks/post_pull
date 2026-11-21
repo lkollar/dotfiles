@@ -1,2 +1,3 @@
 #!/usr/bin/env bash
 "$HOME/.config/yadm/herdr-plugins-link.sh" || true
+PATH="$PATH:$HOME/.local/bin" uv run --script "$HOME/.config/yadm/codex-config-sync.py" || true

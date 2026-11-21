@@ -1,3 +1,4 @@
+# Synced into Codex's local config by codex-config-sync.py.
 [tui]
 collapse_turn_details = true
 fullscreen_transcript = true
