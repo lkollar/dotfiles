@@ -1,0 +1,13 @@
+[tui]
+collapse_turn_details = true
+fullscreen_transcript = true
+vim_mode_default = true
+status_line = [
+  "model-with-reasoning",
+  "current-dir",
+  "thread-name",
+  "context-used",
+  "weekly-limit",
+  "five-hour-limit",
+]
+status_line_use_colors = true
