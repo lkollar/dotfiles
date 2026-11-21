@@ -1,0 +1,48 @@
+#!/bin/sh
+set -eu
+
+message=$(git stripspace --strip-comments < "$1")
+paths=$(git diff --cached --name-only --no-renames)
+scope=$(printf '%s\n' "$paths" | awk -F / '
+    /^\.(agents|claude|codex|pi)\// { print substr($1, 2); next }
+    /^\.gitconfig($|##)/ { print "git"; next }
+    /^\.(zshrc|zshenv|zprofile|zshlogin)($|##)/ { print "zsh"; next }
+    $1 == ".config" && NF >= 2 {
+        tool = $2
+        sub(/##.*/, "", tool)
+        sub(/\.[^.]*$/, "", tool)
+        if (tool ~ /^herdr-(app|plugins)$/) tool = "herdr"
+        if (tool ~ /^[a-z][a-z0-9-]*$/) { print tool; next }
+    }
+    { print "unknown" }
+' | sort -u)
+
+case "$scope" in
+    unknown|*'
+'*) scope= ;;
+esac
+
+printf '%s\n' "$message" | awk -v scope="$scope" '
+    function reject(reason) {
+        print "commit-msg: " reason
+        failed = 1
+    }
+    NR == 1 {
+        if (length($0) > 50) reject("keep the subject within 50 characters")
+        if (/\.$/) reject("drop the trailing period from the subject")
+
+        if (/^[^[:space:]]+:/) {
+            if ($0 !~ /^[a-z][a-z0-9-]*: [[:upper:]]/)
+                reject("use a lowercase tool prefix and a capitalized change")
+        } else if (scope != "") {
+            reject("start the subject with " scope ": followed by the change")
+        } else if ($0 !~ /^[[:upper:]]/) {
+            reject("start the subject with a capitalized change")
+        }
+    }
+    NR == 2 && NF { reject("leave a blank line after the subject") }
+    NR > 1 && length($0) > 72 { reject("wrap body line " NR " at 72 characters") }
+    tolower($0) ~ /^[[:space:]]*(co-authored-by:|claude-session:)/ ||
+        tolower($0) ~ /generated with/ { reject("remove AI attribution") }
+    END { exit failed }
+' >&2

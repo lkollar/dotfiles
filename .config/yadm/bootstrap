@@ -33,6 +33,7 @@ ensure_codex() {
 # https://yadm.io/docs/faq#usage
 yadm gitconfig "user.email" kiss.kollar.laszlo@gmail.com
 yadm gitconfig "user.name" "László Kiss Kollár"
+yadm gitconfig core.hooksPath "$HOME/.config/yadm/hooks"
 
 # check if we are on macos
 if [[ "$OSTYPE" == "darwin"* ]]; then
