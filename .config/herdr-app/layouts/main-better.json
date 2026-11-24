@@ -145,14 +145,30 @@
           "gap": 8
         },
         {
-          "id": "status",
-          "type": "block",
-          "content": {
-            "mod": "workspace-status"
-          },
+          "id": "status-row",
+          "type": "row",
           "size": {
             "px": 28
-          }
+          },
+          "children": [
+            {
+              "id": "status",
+              "type": "block",
+              "content": {
+                "mod": "workspace-status"
+              }
+            },
+            {
+              "id": "limits",
+              "type": "block",
+              "size": {
+                "px": 600
+              },
+              "content": {
+                "mod": "limits"
+              }
+            }
+          ]
         }
       ],
       "resizable": false
